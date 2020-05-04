@@ -1,6 +1,8 @@
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics import balanced_accuracy_score
 import numpy as np
+from skExSTraCS.Timer import Timer
+from skExSTraCS.OfflineEnvironment import OfflineEnvironment
 
 class ExSTraCS(BaseEstimator,ClassifierMixin):
     def __init__(self,learningIterations=100000,N=1000,nu=1,chi=0.8,upsilon=0.04,theta_GA=25,theta_del=20,theta_sub=20,
@@ -83,26 +85,40 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 
         self.hasTrained = False
 
-        ##*************** Fit ****************
-        def fit(self, X, y):
-            """Scikit-learn required: Supervised training of exstracs
-                Parameters
-                X: array-like {n_samples, n_features} Training instances. ALL INSTANCE ATTRIBUTES MUST BE NUMERIC or NAN
-                y: array-like {n_samples} Training labels. ALL INSTANCE PHENOTYPES MUST BE NUMERIC NOT NAN OR OTHER TYPE
-                Returns self
-            """
-            # If trained already, raise Exception
-            if self.hasTrained:
-                raise Exception("Cannot train already trained model again")
+    ##*************** Fit ****************
+    def fit(self, X, y):
+        """Scikit-learn required: Supervised training of exstracs
+             Parameters
+            X: array-like {n_samples, n_features} Training instances. ALL INSTANCE ATTRIBUTES MUST BE NUMERIC or NAN
+            y: array-like {n_samples} Training labels. ALL INSTANCE PHENOTYPES MUST BE NUMERIC NOT NAN OR OTHER TYPE
+            Returns self
+        """
+        # If trained already, raise Exception
+        if self.hasTrained:
+            raise Exception("Cannot train already trained model again")
 
-            # Check if X and Y are numeric
-            try:
-                for instance in X:
-                    for value in instance:
-                        if not (np.isnan(value)):
-                            float(value)
-                for value in y:
-                    float(value)
-            except:
-                raise Exception("X and y must be fully numeric")
+        # Check if X and Y are numeric
+        try:
+            for instance in X:
+                for value in instance:
+                    if not (np.isnan(value)):
+                        float(value)
+            for value in y:
+                float(value)
+        except:
+            raise Exception("X and y must be fully numeric")
+
+        self.timer = Timer()
+        self.timer.startTimeInit()
+        self.env = OfflineEnvironment(X,y,self)
+
+        if self.useExpertKnowledge:
+            self.timer.startTimeEK()
+
+            self.timer.stopTimeEK()
+        if self.doAttributeTracking:
+            self.timer.startTimeAT()
+
+            self.timer.stopTimeAT()
+        self.timer.stopTimeInit()
 
