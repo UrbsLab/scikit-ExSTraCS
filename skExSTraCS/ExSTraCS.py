@@ -7,6 +7,8 @@ from skExSTraCS.ExpertKnowledge import ExpertKnowledge
 from skExSTraCS.AttributeTracking import AttributeTracking
 from skExSTraCS.ClassifierSet import ClassifierSet
 from skExSTraCS.Prediction import Prediction
+from skExSTraCS.RuleCompaction import RuleCompaction
+from skExSTraCS.IterationRecord import IterationRecord
 
 class ExSTraCS(BaseEstimator,ClassifierMixin):
     def __init__(self,learningIterations=100000,N=1000,nu=1,chi=0.8,upsilon=0.04,theta_GA=25,theta_del=20,theta_sub=20,
@@ -90,6 +92,8 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.randomSeed = randomSeed
 
         self.hasTrained = False
+        self.trackingObj = tempTrackingObj()
+        self.record = IterationRecord()
 
     ##*************** Fit ****************
     def fit(self, X, y):
@@ -133,12 +137,55 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 
         self.trackingAccuracy = []
         self.movingAvgCount = 50
+        aveGenerality = 0
+        aveGeneralityFreq = min(self.env.formatData.numTrainInstances, int(self.learningIterations / 20) + 1)
 
         while self.iterationCount < self.learningIterations:
             state_phenotype = self.env.getTrainInstance()
             self.runIteration(state_phenotype)
 
+            self.timer.startTimeEvaluation()
+            if self.iterationCount % aveGeneralityFreq == aveGeneralityFreq - 1:
+                aveGenerality = self.population.getAveGenerality(self)
+
+            if len(self.trackingAccuracy) != 0:
+                accuracy = sum(self.trackingAccuracy)/len(self.trackingAccuracy)
+            else:
+                accuracy = 0
+
+            self.timer.updateGlobalTimer()
+            self.addToTracking(accuracy,aveGenerality)
+            self.timer.stopTimeEvaluation()
+
+            # Increment Instance & Iteration
+            self.iterationCount += 1
+            self.env.newInstance()
+
+        #Rule Compaction
+        if self.ruleCompaction != None:
+            self.trackingObj.resetAll()
+            self.timer.startTimeRuleCmp()
+            RuleCompaction(self)
+            self.timer.stopTimeRuleCmp()
+            self.addToTracking(accuracy, aveGenerality)
+
+        self.hasTrained = True
+        return self
+
+    def addToTracking(self,accuracy,aveGenerality):
+        self.record.addToTracking(self.iterationCount, accuracy, aveGenerality, self.trackingObj.macroPopSize,
+                                  self.trackingObj.microPopSize, self.trackingObj.matchSetSize,self.trackingObj.correctSetSize,
+                                  self.trackingObj.avgIterAge, self.trackingObj.subsumptionCount,self.trackingObj.crossOverCount,
+                                  self.trackingObj.mutationCount, self.trackingObj.coveringCount,self.trackingObj.deletionCount,
+                                  self.trackingObj.RCCount, self.timer.globalTime, self.timer.globalMatching,self.timer.globalCovering,
+                                  self.timer.globalCrossover, self.timer.globalMutation, self.timer.globalAT,self.timer.globalEK,
+                                  self.timer.globalInit, self.timer.globalAdd, self.timer.globalRuleCmp,self.timer.globalDeletion,
+                                  self.timer.globalSubsumption, self.timer.globalSelection, self.timer.globalEvaluation)
+
     def runIteration(self,state_phenotype):
+        # Reset tracking object counters
+        self.trackingObj.resetAll()
+
         #Make [M]
         self.population.makeMatchSet(self,state_phenotype)
 
@@ -186,5 +233,151 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         #Deletion
         self.population.deletion(self)
 
+        self.trackingObj.macroPopSize = len(self.population.popSet)
+        self.trackingObj.microPopSize = self.population.microPopSize
+        self.trackingObj.matchSetSize = len(self.population.matchSet)
+        self.trackingObj.correctSetSize = len(self.population.correctSet)
+        self.trackingObj.avgIterAge = self.population.getInitStampAverage()
+
         #Clear Sets
         self.population.clearSets()
+
+    ##*************** Predict and Score ****************
+    def predict(self, X):
+        """Scikit-learn required: Test Accuracy of ExSTraCS
+            Parameters
+            X: array-like {n_samples, n_features} Test instances to classify. ALL INSTANCE ATTRIBUTES MUST BE NUMERIC
+
+            Returns
+            y: array-like {n_samples} Classifications.
+        """
+        try:
+            for instance in X:
+                for value in instance:
+                    if not (np.isnan(value)):
+                        float(value)
+        except:
+            raise Exception("X must be fully numeric")
+
+        instances = X.shape[0]
+        predList = []
+
+        for inst in range(instances):
+            state = X[inst]
+            self.population.makeEvalMatchSet(self,state)
+            prediction = Prediction(self, self.population)
+            phenotypeSelection = prediction.getDecision()
+            predList.append(phenotypeSelection)
+            self.population.clearSets()
+        return np.array(predList)
+
+    def predict_proba(self, X):
+        """Scikit-learn required: Test Accuracy of eLCS
+            Parameters
+            X: array-like {n_samples, n_features} Test instances to classify. ALL INSTANCE ATTRIBUTES MUST BE NUMERIC
+
+            Returns
+            y: array-like {n_samples} Classifications.
+        """
+        try:
+            for instance in X:
+                for value in instance:
+                    if not (np.isnan(value)):
+                        float(value)
+        except:
+            raise Exception("X must be fully numeric")
+
+        instances = X.shape[0]
+        predList = []
+
+        for inst in range(instances):
+            state = X[inst]
+            self.population.makeEvalMatchSet(self,state)
+            prediction = Prediction(self, self.population)
+            probs = prediction.getProbabilities()
+            predList.append(probs)
+            self.population.clearSets()
+        return np.array(predList)
+
+    def score(self,X,y):
+        predList = self.predict(X)
+        return balanced_accuracy_score(y, predList) #Make it balanced accuracy
+
+    ##*************** More Evaluation Methods ****************
+
+    def getFinalTrainingAccuracy(self,RC=False):
+        if self.hasTrained or RC:
+            originalTrainingData = self.env.formatData.savedRawTrainingData
+            return self.score(originalTrainingData[0], originalTrainingData[1])
+        else:
+            raise Exception("There is no final training accuracy to return, as the ExSTraCS model has not been trained")
+
+    def getFinalInstanceCoverage(self):
+        if self.hasTrained:
+            numCovered = 0
+            originalTrainingData = self.env.formatData.savedRawTrainingData
+            for state in originalTrainingData[0]:
+                self.population.makeEvalMatchSet(self,state)
+                predictionArray = Prediction(self, self.population)
+                if predictionArray.hasMatch:
+                    numCovered += 1
+                self.population.clearSets()
+            return numCovered/len(originalTrainingData[0])
+        else:
+            raise Exception("There is no final instance coverage to return, as the ExSTraCS model has not been trained")
+
+    def getFinalAttributeSpecificityList(self):
+        if self.hasTrained:
+            return self.population.getAttributeSpecificityList(self)
+        else:
+            raise Exception("There is no final attribute specificity list to return, as the ExSTraCS model has not been trained")
+
+    def getFinalAttributeAccuracyList(self):
+        if self.hasTrained:
+            return self.population.getAttributeAccuracyList(self)
+        else:
+            raise Exception("There is no final attribute accuracy list to return, as the ExSTraCS model has not been trained")
+
+    ##Export Methods##
+    def exportIterationTrackingData(self,filename='iterationData.csv'):
+        if self.hasTrained:
+            self.record.exportTrackingToCSV(filename)
+        else:
+            raise Exception("There is no tracking data to export, as the eLCS model has not been trained")
+
+    def exportFinalRulePopulation(self,headerNames=np.array([]),className="phenotype",filename='populationData.csv',DCAL=True):
+        if self.hasTrained:
+            if DCAL:
+                self.record.exportPopDCAL(self,headerNames,className,filename)
+            else:
+                self.record.exportPop(self, headerNames, className, filename)
+        else:
+            raise Exception("There is no rule population to export, as the ExSTraCS model has not been trained")
+
+class tempTrackingObj():
+    #Tracks stats of every iteration (except accuracy, avg generality, and times)
+    def __init__(self):
+        self.macroPopSize = 0
+        self.microPopSize = 0
+        self.matchSetSize = 0
+        self.correctSetSize = 0
+        self.avgIterAge = 0
+        self.subsumptionCount = 0
+        self.crossOverCount = 0
+        self.mutationCount = 0
+        self.coveringCount = 0
+        self.deletionCount = 0
+        self.RCCount = 0
+
+    def resetAll(self):
+        self.macroPopSize = 0
+        self.microPopSize = 0
+        self.matchSetSize = 0
+        self.correctSetSize = 0
+        self.avgIterAge = 0
+        self.subsumptionCount = 0
+        self.crossOverCount = 0
+        self.mutationCount = 0
+        self.coveringCount = 0
+        self.deletionCount = 0
+        self.RCCount = 0

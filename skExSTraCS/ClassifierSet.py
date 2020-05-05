@@ -36,6 +36,7 @@ class ClassifierSet:
             newCl.initializeByCovering(model,setNumerositySum,state,phenotype)
             self.addClassifierToPopulation(model,newCl,True)
             self.matchSet.append(len(self.popSet)-1)
+            model.trackingObj.coveringCount += 1
             doCovering = False
         model.timer.stopTimeCovering()
 
@@ -92,6 +93,7 @@ class ClassifierSet:
             while i < len(self.correctSet):
                 ref = self.correctSet[i]
                 if subsumer.isMoreGeneral(model,self.popSet[ref]):
+                    model.trackingObj.subsumptionCount += 1
                     model.trackingObj.subsumptionCount += 1
                     subsumer.updateNumerosity(self.popSet[ref].numerosity)
                     self.removeMacroClassifier(ref)
@@ -178,6 +180,12 @@ class ClassifierSet:
             cl2.rangeCheck(model)
 
         if changed or nowchanged or howaboutnow:
+            if nowchanged:
+                model.trackingObj.mutationCount += 1
+            if howaboutnow:
+                model.trackingObj.mutationCount += 1
+            if changed:
+                model.trackingObj.crossOverCount += 1
             self.insertDiscoveredClassifiers(model,cl1, cl2, clP1, clP2) #Includes subsumption if activated.
 
     def insertDiscoveredClassifiers(self,model,cl1,cl2,clP1,clP2):
@@ -199,9 +207,11 @@ class ClassifierSet:
         if cl1P!=None and cl1P.subsumes(model,cl):
             self.microPopSize += 1
             cl1P.updateNumerosity(1)
+            model.trackingObj.subsumptionCount+=1
         elif cl2P!=None and cl2P.subsumes(model,cl):
             self.microPopSize += 1
             cl2P.updateNumerosity(1)
+            model.trackingObj.subsumptionCount += 1
         else:
             if len(cl.specifiedAttList) > 0:
                 self.addClassifierToPopulation(model, cl, False)
@@ -273,8 +283,22 @@ class ClassifierSet:
             ref = self.correctSet[i]
             sumCl += self.popSet[ref].timeStampGA * self.popSet[ref].numerosity
             numSum += self.popSet[ref].numerosity #numerosity sum of correct set
-        return sumCl/float(numSum)
+        if numSum != 0:
+            return sumCl / float(numSum)
+        else:
+            return 0
 
+    def getInitStampAverage(self):
+        sumCl = 0.0
+        numSum = 0.0
+        for i in range(len(self.correctSet)):
+            ref = self.correctSet[i]
+            sumCl += self.popSet[ref].initTimeStamp * self.popSet[ref].numerosity
+            numSum += self.popSet[ref].numerosity
+        if numSum != 0:
+            return sumCl / float(numSum)
+        else:
+            return 0
 
     def setIterStamps(self, iterationCount):
         """ Sets the time stamp of all classifiers in the set to the current time. The current time
@@ -318,8 +342,8 @@ class ClassifierSet:
                     self.removeMacroClassifier(i)
                     self.deleteFromMatchSet(i)
                     self.deleteFromCorrectSet(i)
+                    model.trackingObj.deletionCount += 1
                 return
-
 
     def getPopFitnessSum(self):
         """ Returns the sum of the fitnesses of all classifiers in the set. """
@@ -332,3 +356,37 @@ class ClassifierSet:
         """ Clears out references in the match and correct sets for the next learning iteration. """
         self.matchSet = []
         self.correctSet = []
+
+    def getAveGenerality(self,model):
+        genSum = 0
+        for cl in self.popSet:
+            genSum += ((model.env.formatData.numAttributes - len(cl.condition))/float(model.env.formatData.numAttributes))*cl.numerosity
+        if self.microPopSize == 0:
+            aveGenerality = 0
+        else:
+            aveGenerality = genSum/float(self.microPopSize)
+        return aveGenerality
+
+    def makeEvalMatchSet(self,model,state):
+        for i in range(len(self.popSet)):
+            cl = self.popSet[i]
+            if cl.match(model,state):
+                self.matchSet.append(i)
+
+    def getAttributeSpecificityList(self,model):
+        attributeSpecList = []
+        for i in range(model.env.formatData.numAttributes):
+            attributeSpecList.append(0)
+        for cl in self.popSet:
+            for ref in cl.specifiedAttList:
+                attributeSpecList[ref] += cl.numerosity
+        return attributeSpecList
+
+    def getAttributeAccuracyList(self,model):
+        attributeAccList = []
+        for i in range(model.env.formatData.numAttributes):
+            attributeAccList.append(0.0)
+        for cl in self.popSet:
+            for ref in cl.specifiedAttList:
+                attributeAccList[ref] += cl.numerosity * cl.accuracy
+        return attributeAccList
