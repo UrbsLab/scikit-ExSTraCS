@@ -6,6 +6,7 @@ from skExSTraCS.OfflineEnvironment import OfflineEnvironment
 from skExSTraCS.ExpertKnowledge import ExpertKnowledge
 from skExSTraCS.AttributeTracking import AttributeTracking
 from skExSTraCS.ClassifierSet import ClassifierSet
+from skExSTraCS.Prediction import Prediction
 
 class ExSTraCS(BaseEstimator,ClassifierMixin):
     def __init__(self,learningIterations=100000,N=1000,nu=1,chi=0.8,upsilon=0.04,theta_GA=25,theta_del=20,theta_sub=20,
@@ -13,7 +14,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                  doCorrectSetSubsumption=False,doGASubsumption=True,selectionMethod='tournament',doAttributeTracking=True,
                  doAttributeFeedback=True,useExpertKnowledge=True,expertKnowledge=None,filterAlgorithm='multisurf',
                  turfPercent=0.05,reliefNeighbors=10,reliefSampleFraction=1,ruleCompaction='QRF',rebootFilename=None,
-                 discreteAttributeLimit=10,specifiedAttributes=np.array([]),randomSeed=None):
+                 discreteAttributeLimit=10,specifiedAttributes=np.array([]),trackAccuracyWhileFit=False,randomSeed=None):
         '''
         :param learningIterations:          Must be nonnegative integer. The number of training cycles to run.
         :param N:                           Must be nonnegative integer. Maximum micro classifier population size (sum of classifier numerosities).
@@ -51,6 +52,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                                             If "c", attributes specified by index in this param will be continuous and the rest will be discrete. If "d", attributes specified by index in this
                                             param will be discrete and the rest will be continuous.
                                             If this value is given, and discreteAttributeLimit is not "c" or "d", discreteAttributeLimit overrides this specification
+        :param trackAccuracyWhileFit        Must be boolean. Determines if accuracy is tracked during model training
         :param randomSeed:                  Must be an integer or None. Set a constant random seed value to some integer
         '''
 
@@ -84,6 +86,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.rebootFilename = rebootFilename
         self.discreteAttributeLimit = discreteAttributeLimit
         self.specifiedAttributes = specifiedAttributes
+        self.trackAccuracyWhileFit = trackAccuracyWhileFit
         self.randomSeed = randomSeed
 
         self.hasTrained = False
@@ -128,7 +131,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.population = ClassifierSet()
         self.iterationCount = 0
 
-        self.trackedAccuracy = []
+        self.trackingAccuracy = []
         self.movingAvgCount = 50
 
         while self.iterationCount < self.learningIterations:
@@ -136,6 +139,46 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             self.runIteration(state_phenotype)
 
     def runIteration(self,state_phenotype):
-        pass
+        #Make [M]
+        self.population.makeMatchSet(self,state_phenotype)
 
+        #Track Training Accuracy
+        if self.trackAccuracyWhileFit:
+            self.timer.startTimeEvaluation()
+            prediction = Prediction(self,self.population)
+            phenotypePrediction = prediction.getDecision()
+
+            if phenotypePrediction == state_phenotype[1]:
+                if len(self.trackingAccuracy) == self.movingAvgCount:
+                    del self.trackingAccuracy[0]
+                self.trackingAccuracy.append(1)
+            else:
+                if len(self.trackingAccuracy) == self.movingAvgCount:
+                    del self.trackingAccuracy[0]
+                self.trackingAccuracy.append(0)
+
+            self.timer.stopTimeEvaluation()
+
+        #Make [C]
+        self.population.makeCorrectSet(state_phenotype[1])
+
+        #Update Parameters
+        self.population.updateSets(self)
+
+        #[C] Subsumption
+        if self.doCorrectSetSubsumption:
+            self.timer.startTimeSubsumption()
+            self.population.doCorrectSetSubsumption(self)
+            self.timer.stopTimeSubsumption()
+
+        #AT
+        if self.doAttributeTracking:
+            self.timer.startTimeAT()
+            self.AT.updateAttTrack(self,self.population)
+            if self.doAttributeFeedback:
+                self.AT.updatePercent(self)
+                self.AT.genTrackProb(self)
+            self.timer.stopTimeAT()
+
+        #Run GA
 
