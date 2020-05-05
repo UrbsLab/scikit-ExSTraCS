@@ -3,12 +3,15 @@ from sklearn.metrics import balanced_accuracy_score
 import numpy as np
 from skExSTraCS.Timer import Timer
 from skExSTraCS.OfflineEnvironment import OfflineEnvironment
+from skExSTraCS.ExpertKnowledge import ExpertKnowledge
+from skExSTraCS.AttributeTracking import AttributeTracking
+from skExSTraCS.ClassifierSet import ClassifierSet
 
 class ExSTraCS(BaseEstimator,ClassifierMixin):
     def __init__(self,learningIterations=100000,N=1000,nu=1,chi=0.8,upsilon=0.04,theta_GA=25,theta_del=20,theta_sub=20,
                  acc_sub=0.99,beta=0.2,delta=0.1,init_fitness=0.01,fitnessReduction=0.1,theta_sel=0.5,ruleSpecificityLimit=None,
                  doCorrectSetSubsumption=False,doGASubsumption=True,selectionMethod='tournament',doAttributeTracking=True,
-                 doAttributeFeedback=True,useExpertKnowledge=True,expertKnowledgeSource=None,filterAlgorithm='multisurf',
+                 doAttributeFeedback=True,useExpertKnowledge=True,expertKnowledge=None,filterAlgorithm='multisurf',
                  turfPercent=0.05,reliefNeighbors=10,reliefSampleFraction=1,ruleCompaction='QRF',rebootFilename=None,
                  discreteAttributeLimit=10,specifiedAttributes=np.array([]),randomSeed=None):
         '''
@@ -33,8 +36,8 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         :param doAttributeTracking:         Must be boolean. Whether to have AT
         :param doAttributeFeedback:         Must be boolean. Whether to have AF
         :param useExpertKnowledge:          Must be boolean. Whether to use EK
-        :param expertKnowledgeSource:       Must be String or None. If None, EK source is internal. If not, it is a file
-        :param filterAlgorithm:             Must be String. relieff or surf or surfstar or multisurf
+        :param expertKnowledge:             Must be np.ndarray or None. If None, EK source is internal. If not, attribute filter scores are the array (in order)
+        :param filterAlgorithm:             Must be String. relieff or surf or surfstar or multisurf or relieff_turf or surf_turf or surfstar_turf or multisurf_turf
         :param turfPercent:                 Must be float from 0 - 1.
         :param reliefNeighbors:             Must be nonnegative integer. The # of neighbors considered in Relief calculations
         :param reliefSampleFraction:        Must be float from 0 - 1. The # of EK weight algorithm iterations
@@ -72,7 +75,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.doAttributeTracking = doAttributeTracking
         self.doAttributeFeedback = doAttributeFeedback
         self.useExpertKnowledge = useExpertKnowledge
-        self.expertKnowledgeSource = expertKnowledgeSource
+        self.expertKnowledge = expertKnowledge
         self.filterAlgorithm = filterAlgorithm
         self.turfPercent = turfPercent
         self.reliefNeighbors = reliefNeighbors
@@ -114,11 +117,25 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 
         if self.useExpertKnowledge:
             self.timer.startTimeEK()
-
+            self.EK = ExpertKnowledge(self)
             self.timer.stopTimeEK()
         if self.doAttributeTracking:
             self.timer.startTimeAT()
-
+            self.AT = AttributeTracking(self)
             self.timer.stopTimeAT()
         self.timer.stopTimeInit()
+
+        self.population = ClassifierSet()
+        self.iterationCount = 0
+
+        self.trackedAccuracy = []
+        self.movingAvgCount = 50
+
+        while self.iterationCount < self.learningIterations:
+            state_phenotype = self.env.getTrainInstance()
+            self.runIteration(state_phenotype)
+
+    def runIteration(self,state_phenotype):
+        pass
+
 
