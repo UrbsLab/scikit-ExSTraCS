@@ -59,7 +59,7 @@ dataPhenotypes = formatted[:,-1]
 #Get Feature Importance Scores to use as Expert Knowledge (see https://github.com/EpistasisLab/scikit-rebate/ for more details on skrebate package)
 relieff = ReliefF()
 relieff.fit(dataFeatures,dataPhenotypes)
-scores = relieff.feature\_importances\_
+scores = relieff.feature_importances_
 
 #Initialize ExSTraCS Model
 model = ExSTraCS(learningIterations = 5000,expertKnowledge=scores)
