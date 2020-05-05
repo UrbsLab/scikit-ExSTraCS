@@ -181,4 +181,10 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             self.timer.stopTimeAT()
 
         #Run GA
+        self.population.runGA(self,state_phenotype[0],state_phenotype[1])
 
+        #Deletion
+        self.population.deletion(self)
+
+        #Clear Sets
+        self.population.clearSets()
