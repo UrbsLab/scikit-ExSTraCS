@@ -6,15 +6,15 @@ class RuleCompaction:
         self.originalTrainAcc = model.getFinalTrainingAccuracy(RC=True)
 
         if model.ruleCompaction == 'Fu1':
-            self.approach_Fu1()
+            self.approach_Fu1(model)
         elif model.ruleCompaction == 'Fu2':
-            self.approach_Fu2()
+            self.approach_Fu2(model)
         elif model.ruleCompaction == 'CRA2':
-            self.approach_CRA2()
+            self.approach_CRA2(model)
         elif model.ruleCompaction == 'QRC':
-            self.approach_QRC()
+            self.approach_QRC(model)
         elif model.ruleCompaction == 'PDRC':
-            self.approach_PDRC()
+            self.approach_PDRC(model)
         elif model.ruleCompaction == 'QRF':
             self.approach_QRF()
 
@@ -300,8 +300,7 @@ class RuleCompaction:
     def approach_QRF(self):
         retainedClassifiers = []
         for i in range(len(self.pop.popSet)):
-            if self.pop.popSet[i].accuracy <= 0.5 or (
-                    self.pop.popSet[i].correctCover == 1 and len(self.pop.popSet[i].specifiedAttList) > 1):
+            if self.pop.popSet[i].accuracy <= 0.5 or (self.pop.popSet[i].correctCover == 1 and len(self.pop.popSet[i].specifiedAttList) > 1):
                 pass
             else:
                 retainedClassifiers.append(self.pop.popSet[i])

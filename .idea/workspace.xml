@@ -1,0 +1,643 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="e170c4a6-d460-4449-871f-96227c321c22" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/skExSTraCS/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/test_ExSTraCS.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skExSTraCS/AttributeTracking.py" beforeDir="false" afterPath="$PROJECT_DIR$/skExSTraCS/AttributeTracking.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skExSTraCS/Classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/skExSTraCS/Classifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skExSTraCS/ExSTraCS.py" beforeDir="false" afterPath="$PROJECT_DIR$/skExSTraCS/ExSTraCS.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skExSTraCS/ExpertKnowledge.py" beforeDir="false" afterPath="$PROJECT_DIR$/skExSTraCS/ExpertKnowledge.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skExSTraCS/IterationRecord.py" beforeDir="false" afterPath="$PROJECT_DIR$/skExSTraCS/IterationRecord.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skExSTraCS/RBA/Multisurf.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/skExSTraCS/RBA/Relieff.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/skExSTraCS/RBA/Surf.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/skExSTraCS/RBA/Surfstar.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/skExSTraCS/RBA/TurfWrapper.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/skExSTraCS/RuleCompaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/skExSTraCS/RuleCompaction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/test_StringEnumerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_StringEnumerator.py" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DockManager">
+    <window id="4">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_output.py">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="454">
+                    <caret line="229" column="25" lean-forward="true" selection-start-line="229" selection-start-column="25" selection-end-line="229" selection-end-column="25" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/skExSTraCS/ExSTraCS.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="211">
+              <caret line="591" lean-forward="true" selection-start-line="591" selection-end-line="591" />
+              <folding>
+                <element signature="e#0#55#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/skExSTraCS/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="510">
+              <caret line="34" selection-start-line="34" selection-end-line="34" />
+              <folding>
+                <element signature="e#1255#1303#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/test_ExSTraCS.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="480">
+              <caret line="32" column="1" lean-forward="true" selection-start-line="32" selection-start-column="1" selection-end-line="32" selection-end-column="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>getdelpr</find>
+      <find>getdel</find>
+      <find>deletion</find>
+      <find>clearset</find>
+      <find>generality</find>
+      <find>getave</find>
+      <find>correctcover</find>
+      <find>init_fit</find>
+      <find>delet</find>
+      <find>numerositysort</find>
+      <find>numerositys</find>
+      <find>match</find>
+      <find>makeeval</find>
+      <find>addclassifierto</find>
+      <find>reset</find>
+      <find>getiterstam</find>
+      <find>subsumptioncount</find>
+      <find>subsumecl</find>
+      <find>crossovercount</find>
+      <find>mutationcount</find>
+      <find>runga</find>
+      <find>coveringc</find>
+      <find>deletionc</find>
+      <find>deletefromp</find>
+      <find>useexp</find>
+      <find>reliefsample</find>
+      <find>rulespe</find>
+      <find>elcs</find>
+      <find>specifie</find>
+      <find>expertknow</find>
+    </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/skExSTraCS/Timer.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/OfflineEnvironment.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/RBA/Relieff.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/RBA/Surf.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/RBA/TurfWrapper.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/DataManagement.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/RBA/Surfstar.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/RBA/Multisurf.py" />
+        <option value="$PROJECT_DIR$/../ExSTraCS/exstracs_classifier.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/Prediction.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/ClassifierSet.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/RuleCompaction.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/Classifier.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/ExpertKnowledge.py" />
+        <option value="$PROJECT_DIR$/test/test_StringEnumerator.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/IterationRecord.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/AttributeTracking.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/ExSTraCS.py" />
+        <option value="$PROJECT_DIR$/skExSTraCS/__init__.py" />
+        <option value="$PROJECT_DIR$/test/test_ExSTraCS.py" />
+        <option value="$PROJECT_DIR$/setup.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/scikit-ExSTraCS.iml" />
+        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
+        <option value="$PROJECT_DIR$/.idea/misc.xml" />
+        <option value="$PROJECT_DIR$/.idea/modules.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="18" />
+    <option name="y" value="23" />
+    <option name="width" value="1638" />
+    <option name="height" value="974" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="scikit-ExSTraCS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="scikit-ExSTraCS" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="scikit-ExSTraCS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="scikit-ExSTraCS" type="462c0819:PsiDirectoryNode" />
+              <item name="skExSTraCS" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="scikit-ExSTraCS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="scikit-ExSTraCS" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e170c4a6-d460-4449-871f-96227c321c22" name="Default Changelist" comment="" />
+      <created>1588615031065</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1588615031065</updated>
+      <workItem from="1588615033570" duration="634000" />
+      <workItem from="1588615755301" duration="1777000" />
+      <workItem from="1588617750645" duration="21000" />
+      <workItem from="1588617834495" duration="1552000" />
+      <workItem from="1588622633683" duration="144000" />
+      <workItem from="1588622914759" duration="356000" />
+      <workItem from="1588623298511" duration="224000" />
+      <workItem from="1588623555668" duration="4199000" />
+      <workItem from="1588627851952" duration="677000" />
+      <workItem from="1588637605257" duration="15856000" />
+      <workItem from="1588689034696" duration="2287000" />
+      <workItem from="1588692387868" duration="637000" />
+      <workItem from="1588695044261" duration="4110000" />
+      <workItem from="1588701308629" duration="367000" />
+      <workItem from="1588703533086" duration="4920000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="37761000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="18" y="23" width="1638" height="974" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.29699248" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Database Changes" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info anchor="bottom" id="Terminal" order="11" />
+      <window_info anchor="bottom" id="Python Console" order="12" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="SciView" order="3" />
+      <window_info anchor="right" id="Database" order="4" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/../Scikit/skeLCS/OfflineEnvironment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_timer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3960">
+          <caret line="265" column="35" selection-start-line="265" selection-start-column="35" selection-end-line="265" selection-end-column="35" />
+          <folding>
+            <element signature="e#2552#2584#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Scikit/skeLCS/DataManagement.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="31" column="4" selection-start-line="31" selection-start-column="4" selection-end-line="31" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/RBA/TurfWrapper.py" />
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/RBA/Relieff.py" />
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/RBA/Surf.py" />
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/RBA/Surfstar.py" />
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/RBA/turf_wrapper.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="30" selection-start-line="30" selection-end-line="30" />
+          <folding>
+            <element signature="e#2552#2577#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/RBA/multisurf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2475">
+          <caret line="165" column="8" selection-start-line="165" selection-start-column="8" selection-end-line="165" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="54" column="23" selection-start-line="54" selection-start-column="17" selection-end-line="54" selection-end-column="23" />
+          <folding>
+            <element signature="e#2316#2327#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/RBA/surfstar.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="150" column="57" selection-start-line="150" selection-start-column="43" selection-end-line="150" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../scikit-XCS/skXCS/XCS.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="107">
+          <caret line="306" column="32" lean-forward="true" selection-start-line="306" selection-start-column="32" selection-end-line="306" selection-end-column="32" />
+          <folding>
+            <element signature="e#1#56#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_prediction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-849" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Scikit/skeLCS/Prediction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="24" lean-forward="true" selection-start-line="3" selection-start-column="24" selection-end-line="3" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-848">
+          <caret line="59" column="54" lean-forward="true" selection-start-line="59" selection-start-column="54" selection-end-line="59" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/Prediction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1350">
+          <caret line="90" column="28" selection-start-line="90" selection-start-column="28" selection-end-line="90" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/OfflineEnvironment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" column="38" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_algorithm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="788">
+          <caret line="324" column="36" selection-start-line="324" selection-start-column="28" selection-end-line="324" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Scikit/skeLCS/IterationRecord.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="825">
+          <caret line="55" column="50" lean-forward="true" selection-start-line="55" selection-start-column="50" selection-end-line="55" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/RBA/Multisurf.py" />
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/ExpertKnowledge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="2" lean-forward="true" selection-start-line="4" selection-start-column="2" selection-end-line="4" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_rc.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6675">
+          <caret line="445" column="45" selection-start-line="445" selection-start-column="45" selection-end-line="445" selection-end-column="45" />
+          <folding>
+            <element signature="e#2556#2588#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/Timer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="35" selection-start-line="12" selection-start-column="35" selection-end-line="12" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_offlineenv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="31" selection-start-line="31" selection-end-line="31" />
+          <folding>
+            <element signature="e#2541#2581#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_ek.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1275">
+          <caret line="92" column="41" selection-start-line="92" selection-start-column="41" selection-end-line="92" selection-end-column="41" />
+          <folding>
+            <element signature="e#2634#2643#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_constants.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4530">
+          <caret line="304" column="17" selection-start-line="304" selection-start-column="13" selection-end-line="304" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_classifierset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2220">
+          <caret line="152" column="16" selection-start-line="152" selection-start-column="8" selection-end-line="152" selection-end-column="16" />
+          <folding>
+            <element signature="e#2167#2199#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Scikit/skeLCS/ClassifierSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5385">
+          <caret line="361" column="39" selection-start-line="361" selection-start-column="39" selection-end-line="361" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9900">
+          <caret line="664" column="39" selection-start-line="664" selection-start-column="39" selection-end-line="664" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Scikit/skeLCS/Classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6420">
+          <caret line="430" column="4" selection-start-line="430" selection-start-column="4" selection-end-line="430" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test_StringEnumerator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="60" lean-forward="true" selection-start-line="16" selection-start-column="60" selection-end-line="16" selection-end-column="60" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/IterationRecord.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="137" column="26" selection-start-line="137" selection-start-column="26" selection-end-line="137" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/DataManagement.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="313">
+          <caret line="85" column="40" selection-start-line="85" selection-start-column="32" selection-end-line="85" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/ClassifierSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5807">
+          <caret line="391" column="31" selection-start-line="391" selection-start-column="31" selection-end-line="391" selection-end-column="31" />
+          <folding>
+            <element signature="e#1#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/Classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="257">
+          <caret line="41" column="40" selection-start-line="41" selection-start-column="40" selection-end-line="41" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/AttributeTracking.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="585">
+          <caret line="39" lean-forward="true" selection-start-line="39" selection-end-line="39" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Scikit/skeLCS/eLCS.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="68" column="8" lean-forward="true" selection-start-line="68" selection-start-column="8" selection-end-line="68" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#56#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_at.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="91" column="29" lean-forward="true" selection-start-line="91" selection-start-column="29" selection-end-line="91" selection-end-column="29" />
+          <folding>
+            <element signature="e#2410#2442#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/RuleCompaction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4695">
+          <caret line="313" column="28" selection-start-line="313" selection-start-column="28" selection-end-line="313" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ExSTraCS/exstracs_output.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="454">
+          <caret line="229" column="25" lean-forward="true" selection-start-line="229" selection-start-column="25" selection-end-line="229" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/ExSTraCS.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="591" lean-forward="true" selection-start-line="591" selection-end-line="591" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../scikit-XCS/skXCS/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="30" column="20" lean-forward="true" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
+          <folding>
+            <element signature="e#1250#1284#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skExSTraCS/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="34" selection-start-line="34" selection-end-line="34" />
+          <folding>
+            <element signature="e#1255#1303#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test_ExSTraCS.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../scikit-XCS/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="32" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="32" column="1" lean-forward="true" selection-start-line="32" selection-start-column="1" selection-end-line="32" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

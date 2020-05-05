@@ -1,14 +1,13 @@
-from skExSTraCS.RBA.Multisurf import MultiSURF
 import copy
 
 class ExpertKnowledge:
     def __init__(self,model):
         self.scores = None
 
-        if model.expertKnowledge == None: #If internal EK generation
-            self.scores = self.runFilter(model)
-        else:
+        if model.expertKnowledge != None:
             self.scores = model.expertKnowledge.tolist()
+        else:
+            raise Exception("EK is invalid. This should never happen")
 
         self.adjustScores(model)
 
@@ -37,26 +36,6 @@ class ExpertKnowledge:
             else:
                 probList.append(self.scores[i] / float(maxVal + maxVal * 0.01))
         self.EKprobabilityList = probList
-
-    def runFilter(self,model):
-        if model.filterAlgorithm == 'multisurf_turf':
-            pass
-        elif model.filterAlgorithm == 'surfstar_turf':
-            pass
-        elif model.filterAlgorithm == 'surf_turf':
-            pass
-        elif model.filterAlgorithm == 'relieff_turf':
-            pass
-        elif model.filterAlgorithm == 'multisurf':
-            filterScores = MultiSURF(model)
-        elif model.filterAlgorithm == 'surfstar':
-            pass
-        elif model.filterAlgorithm == 'surf':
-            pass
-        elif model.filterAlgorithm == 'relieff':
-            pass
-
-        return filterScores
 
     def adjustScores(self,model):
         minEK = min(self.scores)

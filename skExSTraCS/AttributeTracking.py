@@ -37,3 +37,11 @@ class AttributeTracking:
                 probList.append(trackList[i]/float(maxVal + maxVal*0.01))  #perhaps make this float a constant, or think of better way to do this.
 
         self.probabilityList = probList
+
+    def getSumGlobalAttTrack(self,model):
+        """ For each attribute, sum the attribute tracking scores over all instances. For Reporting and Debugging"""
+        globalAttTrack = [0.0 for i in range(model.env.formatData.numAttributes)]
+        for i in range(model.env.formatData.numAttributes):
+            for j in range(model.env.formatData.numTrainInstances):
+                globalAttTrack[i] += self.attAccuracySums[j][i]
+        return globalAttTrack

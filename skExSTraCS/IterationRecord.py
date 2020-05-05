@@ -4,9 +4,9 @@ import numpy as np
 class IterationRecord():
     '''
     IterationRecord Tracks 1 dictionary:
-    1) Tracking Dict: Cursory Iteration Evaluation. Frequency determined by trackingFrequency param in eLCS. For each iteration evaluated, it saves:
+    1) Tracking Dict: Cursory Iteration Evaluation. Frequency determined by trackingFrequency param in ExSTraCS. For each iteration evaluated, it saves:
         KEY-iteration number
-        0-accuracy (approximate from correct array in eLCS)
+        0-accuracy (approximate from correct array in ExSTraCS)
         1-average population generality
         2-macropopulation size
         3-micropopulation size
@@ -66,8 +66,8 @@ class IterationRecord():
                 writer.writerow([k,v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8],v[9],v[10],v[11],v[12],v[13],v[14],v[15],v[16],v[17],v[18],v[19],v[20],v[21],v[22],v[23],v[24],v[25],v[26]])
         file.close()
 
-    def exportPop(self,elcs,headerNames=np.array([]),className='phenotype',filename='populationData.csv'):
-        numAttributes = elcs.env.formatData.numAttributes
+    def exportPop(self,model,popSet,headerNames=np.array([]),className='phenotype',filename='populationData.csv'):
+        numAttributes = model.env.formatData.numAttributes
 
         headerNames = headerNames.tolist() #Convert to Python List
 
@@ -83,7 +83,7 @@ class IterationRecord():
             writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
             writer.writerow(headerNames+[className]+["Fitness","Accuracy","Numerosity","Avg Match Set Size","TimeStamp GA","Iteration Initialized","Specificity","Deletion Probability","Correct Count","Match Count"])
-            classifiers = elcs.population.popSet
+            classifiers = popSet
             for classifier in classifiers:
                 a = []
                 for attributeIndex in range(numAttributes):
@@ -116,9 +116,9 @@ class IterationRecord():
                 writer.writerow(a)
         file.close()
 
-    def exportPopDCAL(self,elcs,headerNames=np.array([]),className='phenotype',filename='populationData.csv'):
+    def exportPopDCAL(self,model,popSet,headerNames=np.array([]),className='phenotype',filename='populationData.csv'):
 
-        numAttributes = elcs.env.formatData.numAttributes
+        numAttributes = model.env.formatData.numAttributes
 
         headerNames = headerNames.tolist() #Convert to Python List
 
@@ -135,7 +135,7 @@ class IterationRecord():
 
             writer.writerow(["Specified Values","Specified Attribute Names"]+[className]+["Fitness","Accuracy","Numerosity","Avg Match Set Size","TimeStamp GA","Iteration Initialized","Specificity","Deletion Probability","Correct Count","Match Count"])
 
-            classifiers = elcs.population.popSet
+            classifiers = popSet
             for classifier in classifiers:
                 a = []
 

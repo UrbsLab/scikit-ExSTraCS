@@ -39,7 +39,7 @@ class Classifier:
         self.phenotype = phenotype
 
         toSpecify = random.randint(1, model.ruleSpecificityLimit)
-        if model.useExpertKnowledge:
+        if model.expertKnowledge != None:
             i = 0
             while len(self.specifiedAttList) < toSpecify and i < model.env.formatData.numAttributes - 1:
                 target = model.EK.EKRank[i]
@@ -329,7 +329,7 @@ class Classifier:
 
         # MAINTAIN SPECIFICITY
         if newRuleSpec == len(self.specifiedAttList) and random.random() < (1 - model.upsilon):
-            if not model.useExpertKnowledge or random.random() > pressureProb:
+            if model.expertKnowledge == None or random.random() > pressureProb:
                 genTarget = random.sample(self.specifiedAttList,1)
             else:
                 genTarget = self.selectGeneralizeRW(model,1)
@@ -349,7 +349,7 @@ class Classifier:
             if len(self.specifiedAttList) >= len(state):
                 pass
             else:
-                if not model.useExpertKnowledge or random.random() > pressureProb:
+                if model.expertKnowledge == None or random.random() > pressureProb:
                     pickList = list(range(model.env.formatData.numAttributes))
                     for i in self.specifiedAttList:
                         pickList.remove(i)
@@ -367,7 +367,7 @@ class Classifier:
         #Increase Specificity
         elif newRuleSpec > len(self.specifiedAttList): #Specify more attributes
             change = newRuleSpec - len(self.specifiedAttList)
-            if not model.useExpertKnowledge or random.random() > pressureProb:
+            if model.expertKnowledge == None or random.random() > pressureProb:
                 pickList = list(range(model.env.formatData.numAttributes))
                 for i in self.specifiedAttList: # Make list with all non-specified attributes
                     pickList.remove(i)
@@ -384,7 +384,7 @@ class Classifier:
         #Decrease Specificity
         elif newRuleSpec < len(self.specifiedAttList): # Generalize more attributes.
             change = len(self.specifiedAttList) - newRuleSpec
-            if not model.useExpertKnowledge or random.random() > pressureProb:
+            if model.expertKnowledge == None or random.random() > pressureProb:
                 genTarget = random.sample(self.specifiedAttList,change)
             else:
                 genTarget = self.selectGeneralizeRW(model,change)

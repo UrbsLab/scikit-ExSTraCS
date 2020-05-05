@@ -1,10 +1,10 @@
 import unittest
-from skXCS.StringEnumerator import StringEnumerator
+from skExSTraCS.StringEnumerator import StringEnumerator
 import pandas as pd
 import numpy as np
 import os
 
-THIS_DIR = os.path.dirname(os.path.abspath("test_eLCS.py"))
+THIS_DIR = os.path.dirname(os.path.abspath("test_StringEnumerator.py"))
 if THIS_DIR[-4:] == "test": #Patch that ensures testing from Scikit not test directory
     THIS_DIR = THIS_DIR[:-5]
 
