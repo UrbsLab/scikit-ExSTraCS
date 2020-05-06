@@ -65,7 +65,7 @@ scores = relieff.feature_importances_
 model = ExSTraCS(learningIterations = 5000,expertKnowledge=scores)
 
 #3-fold CV
-print(np.mean(cross_val_score(model,dataFeatures,dataActions,cv=3)))
+print(np.mean(cross_val_score(model,dataFeatures,dataPhenotypes,cv=3)))
 ```
 
 ## License
