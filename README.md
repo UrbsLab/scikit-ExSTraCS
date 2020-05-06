@@ -51,7 +51,7 @@ dataFeatures = data.drop(classLabel,axis=1).values #DEFINE classLabel variable a
 dataPhenotypes = data[classLabel].values
 
 #Shuffle Data Before CV
-formatted = np.insert(dataFeatures,dataFeatures.shape[1],dataActions,1)
+formatted = np.insert(dataFeatures,dataFeatures.shape[1],dataPhenotypes,1)
 np.random.shuffle(formatted)
 dataFeatures = np.delete(formatted,-1,axis=1)
 dataPhenotypes = formatted[:,-1]
