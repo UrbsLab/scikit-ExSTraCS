@@ -15,7 +15,11 @@ class AttributeTracking:
 
     def updatePercent(self, model):
         """ Determines the frequency with which attribute feedback is applied within the GA.  """
-        self.percent = model.iterationCount/float(model.learningIterations)
+        self.percent = model.iterationCount/model.learningIterations
+
+    def getTrackProb(self):
+        """ Returns the tracking probability list. """
+        return self.probabilityList
 
     def genTrackProb(self,model):
         """ Calculate and return the attribute probabilities based on the attribute tracking scores. """

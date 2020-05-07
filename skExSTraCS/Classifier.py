@@ -1,5 +1,6 @@
 import random
 import copy
+import numpy as np
 
 class Classifier:
     def __init__(self,model):
@@ -39,7 +40,7 @@ class Classifier:
         self.phenotype = phenotype
 
         toSpecify = random.randint(1, model.ruleSpecificityLimit)
-        if model.expertKnowledge != None:
+        if model.doExpertKnowledge:
             i = 0
             while len(self.specifiedAttList) < toSpecify and i < model.env.formatData.numAttributes - 1:
                 target = model.EK.EKRank[i]
@@ -50,7 +51,7 @@ class Classifier:
         else:
             potentialSpec = random.sample(range(model.env.formatData.numAttributes),toSpecify)
             for attRef in potentialSpec:
-                if state[attRef] == None:
+                if state[attRef] != None:
                     self.specifiedAttList.append(attRef)
                     self.condition.append(self.buildMatch(model,attRef,state))
 
@@ -148,7 +149,7 @@ class Classifier:
         return False
 
     def subsumes(self,model,cl):
-        return cl.phenotype == self.phenotype and self.isSubsumer(cl) and self.isMoreGeneral(model,cl)
+        return cl.phenotype == self.phenotype and self.isSubsumer(model) and self.isMoreGeneral(model,cl)
 
     def isMoreGeneral(self,model, cl):
         if len(self.specifiedAttList) >= len(cl.specifiedAttList):
@@ -175,7 +176,7 @@ class Classifier:
         p_self_specifiedAttList = copy.deepcopy(self.specifiedAttList)
         p_cl_specifiedAttList = copy.deepcopy(cl.specifiedAttList)
 
-        useAT = model.doAttributeFeeback and random.random() < model.AT.percent
+        useAT = model.doAttributeFeedback and random.random() < model.AT.percent
 
         comboAttList = []
         for i in p_self_specifiedAttList:
@@ -329,7 +330,8 @@ class Classifier:
 
         # MAINTAIN SPECIFICITY
         if newRuleSpec == len(self.specifiedAttList) and random.random() < (1 - model.upsilon):
-            if model.expertKnowledge == None or random.random() > pressureProb:
+            #Remove random condition element
+            if not model.doExpertKnowledge or random.random() > pressureProb:
                 genTarget = random.sample(self.specifiedAttList,1)
             else:
                 genTarget = self.selectGeneralizeRW(model,1)
@@ -338,18 +340,18 @@ class Classifier:
             if not attributeInfoType or random.random() > 0.5:
                 if not useAT or random.random() > model.AT.getTrackProb()[genTarget[0]]:
                     # Generalize Target
-                    i = self.specifiedAttList.index(
-                        genTarget[0])  # reference to the position of the attribute in the rule representation
+                    i = self.specifiedAttList.index(genTarget[0])  # reference to the position of the attribute in the rule representation
                     self.specifiedAttList.remove(genTarget[0])
                     self.condition.pop(i)  # buildMatch handles both discrete and continuous attributes
                     changed = True
             else:
                 self.mutateContinuousAttributes(model,useAT, genTarget[0])
 
+            #Add random condition element
             if len(self.specifiedAttList) >= len(state):
                 pass
             else:
-                if model.expertKnowledge == None or random.random() > pressureProb:
+                if not model.doExpertKnowledge or random.random() > pressureProb:
                     pickList = list(range(model.env.formatData.numAttributes))
                     for i in self.specifiedAttList:
                         pickList.remove(i)
@@ -367,7 +369,7 @@ class Classifier:
         #Increase Specificity
         elif newRuleSpec > len(self.specifiedAttList): #Specify more attributes
             change = newRuleSpec - len(self.specifiedAttList)
-            if model.expertKnowledge == None or random.random() > pressureProb:
+            if not model.doExpertKnowledge or random.random() > pressureProb:
                 pickList = list(range(model.env.formatData.numAttributes))
                 for i in self.specifiedAttList: # Make list with all non-specified attributes
                     pickList.remove(i)
@@ -384,7 +386,7 @@ class Classifier:
         #Decrease Specificity
         elif newRuleSpec < len(self.specifiedAttList): # Generalize more attributes.
             change = len(self.specifiedAttList) - newRuleSpec
-            if model.expertKnowledge == None or random.random() > pressureProb:
+            if not model.doExpertKnowledge or random.random() > pressureProb:
                 genTarget = random.sample(self.specifiedAttList,change)
             else:
                 genTarget = self.selectGeneralizeRW(model,change)
@@ -406,53 +408,75 @@ class Classifier:
         return changed
 
     def selectGeneralizeRW(self,model,count):
-        EKScoreSum = 0
-        selectList = []
-        currentCount = 0
-        specAttList = copy.deepcopy(self.specifiedAttList)
-        for i in self.specifiedAttList:
-            # When generalizing, EK is inversely proportional to selection probability
-            EKScoreSum += 1 / float(model.EK.scores[i] + 1)
+        probList = []
+        for attribute in self.specifiedAttList:
+            probList.append(model.EK.scores[attribute])
+        if sum(probList) == 0:
+            probList = (np.array(probList) + 1).tolist()
+        probList = np.array(probList)/sum(probList) #normalize
+        return np.random.choice(self.specifiedAttList,count,replace=False,p=probList).tolist()
 
-        while currentCount < count:
-            choicePoint = random.random() * EKScoreSum
-            i = 0
-            sumScore = 1 / float(model.EK.scores[specAttList[i]] + 1)
-            while choicePoint > sumScore:
-                i = i + 1
-                sumScore += 1 / float(model.EK.scores[specAttList[i]] + 1)
-            selectList.append(specAttList[i])
-            EKScoreSum -= 1 / float(model.EK.scores[specAttList[i]] + 1)
-            specAttList.pop(i)
-            currentCount += 1
-        return selectList
+    # def selectGeneralizeRW(self,model,count):
+    #     EKScoreSum = 0
+    #     selectList = []
+    #     currentCount = 0
+    #     specAttList = copy.deepcopy(self.specifiedAttList)
+    #     for i in self.specifiedAttList:
+    #         # When generalizing, EK is inversely proportional to selection probability
+    #         EKScoreSum += 1 / float(model.EK.scores[i] + 1)
+    #
+    #     while currentCount < count:
+    #         choicePoint = random.random() * EKScoreSum
+    #         i = 0
+    #         sumScore = 1 / float(model.EK.scores[specAttList[i]] + 1)
+    #         while choicePoint > sumScore:
+    #             i = i + 1
+    #             sumScore += 1 / float(model.EK.scores[specAttList[i]] + 1)
+    #         selectList.append(specAttList[i])
+    #         EKScoreSum -= 1 / float(model.EK.scores[specAttList[i]] + 1)
+    #         specAttList.pop(i)
+    #         currentCount += 1
+    #     return selectList
 
-    def selectSpecifyRW(self, model,count):
-        """ EK applied to the selection of an attribute to specify for mutation. """
+    def selectSpecifyRW(self,model,count):
         pickList = list(range(model.env.formatData.numAttributes))
         for i in self.specifiedAttList:  # Make list with all non-specified attributes
             pickList.remove(i)
 
-        EKScoreSum = 0
-        selectList = []
-        currentCount = 0
+        probList = []
+        for attribute in pickList:
+            probList.append(model.EK.scores[attribute])
+        if sum(probList) == 0:
+            probList = (np.array(probList) + 1).tolist()
+        probList = np.array(probList) / sum(probList)  # normalize
+        return np.random.choice(pickList, count, replace=False, p=probList).tolist()
 
-        for i in pickList:
-            # When generalizing, EK is inversely proportional to selection probability
-            EKScoreSum += model.EK.scores[i]
-
-        while currentCount < count:
-            choicePoint = random.random() * EKScoreSum
-            i = 0
-            sumScore = model.EK.scores[pickList[i]]
-            while choicePoint > sumScore:
-                i = i + 1
-                sumScore += model.EK.scores[pickList[i]]
-            selectList.append(pickList[i])
-            EKScoreSum -= model.EK.scores[pickList[i]]
-            pickList.pop(i)
-            currentCount += 1
-        return selectList
+    # def selectSpecifyRW(self, model,count):
+    #     """ EK applied to the selection of an attribute to specify for mutation. """
+    #     pickList = list(range(model.env.formatData.numAttributes))
+    #     for i in self.specifiedAttList:  # Make list with all non-specified attributes
+    #         pickList.remove(i)
+    #
+    #     EKScoreSum = 0
+    #     selectList = []
+    #     currentCount = 0
+    #
+    #     for i in pickList:
+    #         # When generalizing, EK is inversely proportional to selection probability
+    #         EKScoreSum += model.EK.scores[i]
+    #
+    #     while currentCount < count:
+    #         choicePoint = random.random() * EKScoreSum
+    #         i = 0
+    #         sumScore = model.EK.scores[pickList[i]]
+    #         while choicePoint > sumScore:
+    #             i = i + 1
+    #             sumScore += model.EK.scores[pickList[i]]
+    #         selectList.append(pickList[i])
+    #         EKScoreSum -= model.EK.scores[pickList[i]]
+    #         pickList.pop(i)
+    #         currentCount += 1
+    #     return selectList
 
     def mutateContinuousAttributes(self, model,useAT, j):
         # -------------------------------------------------------

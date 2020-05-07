@@ -125,7 +125,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 
         #init_fitness
         if not self.checkIsFloat(init_fitness):
-            raise Exception("init_fit param must be float")
+            raise Exception("init_fitness param must be float")
 
         #fitnessReduction
         if not self.checkIsFloat(fitnessReduction):
@@ -139,12 +139,12 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             raise Exception("theta_sel param must be float from 0 - 1")
 
         #ruleSpecificityLimit
-        if self.ruleSpecificityLimit != None:
+        if ruleSpecificityLimit != None:
             if not self.checkIsInt(ruleSpecificityLimit):
-                raise Exception("ruleSpecificityLimit param must be nonnegative integer")
+                raise Exception("ruleSpecificityLimit param must be nonnegative integer or None")
 
-            if theta_sub < 0:
-                raise Exception("ruleSpecificityLimit param must be nonnegative integer")
+            if ruleSpecificityLimit < 0:
+                raise Exception("ruleSpecificityLimit param must be nonnegative integer or None")
 
         #doCorrectSetSubsumption
         if not(isinstance(doCorrectSetSubsumption,bool)):
@@ -169,6 +169,8 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         #expertKnowledge
         if not (isinstance(expertKnowledge, np.ndarray)) and not (isinstance(expertKnowledge, list)) and expertKnowledge != None:
             raise Exception("expertKnowledge param must be None or list/ndarray")
+        if isinstance(expertKnowledge,np.ndarray):
+            expertKnowledge = expertKnowledge.tolist()
 
         #ruleCompaction
         if ruleCompaction != None and ruleCompaction != 'QRF' and ruleCompaction != 'PDRC' and ruleCompaction != 'QRC' and ruleCompaction != 'CRA2' and ruleCompaction != 'Fu2' and ruleCompaction != 'Fu1':
@@ -233,6 +235,10 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.selectionMethod = selectionMethod
         self.doAttributeTracking = doAttributeTracking
         self.doAttributeFeedback = doAttributeFeedback
+        if not (isinstance(expertKnowledge, np.ndarray)) and not (isinstance(expertKnowledge, list)):
+            self.doExpertKnowledge = False
+        else:
+            self.doExpertKnowledge = True
         self.expertKnowledge = expertKnowledge
         self.ruleCompaction = ruleCompaction
         self.rebootFilename = rebootFilename
@@ -288,6 +294,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.iterationCount = 0
         self.trackingAccuracy = []
         self.movingAvgCount = 50
+        self.env = OfflineEnvironment(X,y,self)
         aveGenerality = 0
         aveGeneralityFreq = min(self.env.formatData.numTrainInstances, int(self.learningIterations / 20) + 1)
 
@@ -298,20 +305,21 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             self.rebootPopulation()
 
         self.timer.startTimeInit()
-        self.env = OfflineEnvironment(X,y,self)
 
-        if self.expertKnowledge != None:
+        if self.doExpertKnowledge:
             if len(self.expertKnowledge) != self.env.formatData.numAttributes:
                 raise Exception("length of expertKnowledge param must match the # of data instance attributes")
 
-        if self.expertKnowledge != None:
+        if self.doExpertKnowledge:
             self.timer.startTimeEK()
             self.EK = ExpertKnowledge(self)
             self.timer.stopTimeEK()
-        if self.doAttributeTracking and self.rebootFilename == None:
+        if self.doAttributeTracking and (self.rebootFilename == None or (self.rebootFilename != None and self.AT == None)):
             self.timer.startTimeAT()
             self.AT = AttributeTracking(self)
             self.timer.stopTimeAT()
+        elif not self.doAttributeTracking and self.rebootFilename == None:
+            self.AT = None
         self.timer.stopTimeInit()
 
         while self.iterationCount < self.learningIterations:
@@ -343,8 +351,8 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             RuleCompaction(self)
             self.timer.stopTimeRuleCmp()
             self.timer.startTimeEvaluation()
-            if self.trackAccuracyWhileFit:
-                accuracy = self.getFinalTrainingAccuracy(RC=True)
+            if len(self.trackingAccuracy) != 0:
+                accuracy = sum(self.trackingAccuracy) / len(self.trackingAccuracy)
             else:
                 accuracy = 0
             aveGenerality = self.population.getAveGenerality(self)
@@ -442,11 +450,12 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             if filename == None:
                 filename = 'pickled'+str(int(time.time()))
             outfile = open(filename, 'wb')
+            finalMetricsCopy = copy.deepcopy(self.finalMetrics)
             if saveRCPop==False:
-                self.finalMetrics.pop(len(self.finalMetrics) - 2)
+                finalMetricsCopy.pop(len(self.finalMetrics) - 2)
             else:
-                self.finalMetrics.pop(len(self.finalMetrics) - 1)
-            pickle.dump(self.finalMetrics, outfile)
+                finalMetricsCopy.pop(len(self.finalMetrics) - 1)
+            pickle.dump(finalMetricsCopy, outfile)
             outfile.close()
 
     def rebootPopulation(self):
@@ -459,7 +468,8 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         for rule in popSet:
             microPopSize += rule.numerosity
         set = ClassifierSet()
-        set.popSet = set
+        set.popSet = popSet
+        set.microPopSize = microPopSize
         self.population = set
         self.timer = Timer()
         self.timer.addedTime = rawData[1]

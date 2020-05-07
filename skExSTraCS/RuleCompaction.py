@@ -3,11 +3,11 @@ class RuleCompaction:
     def __init__(self,model):
         self.pop = model.population
         self.originalPopLength = len(model.population.popSet)
-        self.originalTrainAcc = model.getFinalTrainingAccuracy(RC=True)
-
         if model.ruleCompaction == 'Fu1':
+            self.originalTrainAcc = model.getFinalTrainingAccuracy(RC=True)
             self.approach_Fu1(model)
         elif model.ruleCompaction == 'Fu2':
+            self.originalTrainAcc = model.getFinalTrainingAccuracy(RC=True)
             self.approach_Fu2(model)
         elif model.ruleCompaction == 'CRA2':
             self.approach_CRA2(model)
@@ -65,7 +65,7 @@ class RuleCompaction:
             model.env.resetDataRef()
             for j in range(model.env.formatData.numTrainInstances):
                 cl = self.pop.popSet[i]
-                state = model.env.getTrainIsntance()[0]
+                state = model.env.getTrainInstance()[0]
                 if cl.match(model,state):
                     matchCountList[i] += 1
                 model.env.newInstance()
@@ -79,7 +79,7 @@ class RuleCompaction:
 
         tempEnv = copy.deepcopy(model.env)
         trainingData = tempEnv.formatData.trainFormatted
-        while len(trainingData) > 0 and keepGoing:
+        while len(trainingData[0]) > 0 and keepGoing:
             bestRef = None
             bestValue = None
             for i in range(len(matchCountList)):
@@ -95,12 +95,13 @@ class RuleCompaction:
             matchedData = 0
             w = 0
             cl = self.pop.popSet[bestRef]
-            for i in range(len(trainingData)):
-                state = trainingData[w][0]
+            for i in range(len(trainingData[0])):
+                state = trainingData[0][w]
                 doesMatch = cl.match(model,state)
                 if doesMatch:
                     matchedData += 1
-                    del trainingData[w]
+                    del trainingData[0][w]
+                    del trainingData[1][w]
                 else:
                     w += 1
             if matchedData > 0:
@@ -113,9 +114,9 @@ class RuleCompaction:
             matchCountList = [0.0 for v in range(len(self.pop.popSet))]
             for i in range(len(self.pop.popSet)):
                 dataRef = 0
-                for j in range(len(trainingData)):  # For each instance in training data
+                for j in range(len(trainingData[0])):  # For each instance in training data
                     cl = self.pop.popSet[i]
-                    state = trainingData[dataRef][0]
+                    state = trainingData[0][dataRef]
                     doesMatch = cl.match(model,state)
                     if doesMatch:
                         matchCountList[i] += 1
@@ -230,17 +231,18 @@ class RuleCompaction:
         tempEnv = copy.deepcopy(model.env)
         trainingData = tempEnv.formatData.trainFormatted
 
-        while len(trainingData) > 0 and keepGoing:
-            newTrainSet = []
+        while len(trainingData[0]) > 0 and keepGoing:
+            newTrainSet = [[],[]]
             matchedData = 0
-            for w in range(len(trainingData)):
+            for w in range(len(trainingData[0])):
                 cl = self.pop.popSet[0]
-                state = trainingData[w][0]
+                state = trainingData[0][w]
                 doesMatch = cl.match(model,state)
                 if doesMatch:
                     matchedData += 1
                 else:
-                    newTrainSet.append(trainingData[w])
+                    newTrainSet[0].append(trainingData[0][w])
+                    newTrainSet[1].append(trainingData[1][w])
             if matchedData > 0:
                 finalClassifiers.append(self.pop.popSet[0])  # Add best classifier to final list - only do this if there are any remaining matching data instances for this rule!
             # Update classifier list and training set list
@@ -256,7 +258,7 @@ class RuleCompaction:
         matchSet = []
         correctSet = []
 
-        model.env.resetDataRef(True)
+        model.env.resetDataRef()
         for j in range(model.env.formatData.numTrainInstances):
             state_phenotype = model.env.getTrainInstance()
             state = state_phenotype[0]
@@ -291,11 +293,11 @@ class RuleCompaction:
                 retainedClassifiers.append(self.pop.popSet[highestRef])
 
             # Move to the next instance
-            model.env.newInstance(True)
-            self.matchSet = []
-            self.correctSet = []
+            model.env.newInstance()
+            matchSet = []
+            correctSet = []
 
-            self.pop.popSet = retainedClassifiers
+        self.pop.popSet = retainedClassifiers
 
     def approach_QRF(self):
         retainedClassifiers = []

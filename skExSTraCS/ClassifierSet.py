@@ -19,9 +19,9 @@ class ClassifierSet:
         model.timer.startTimeMatching()
         for i in range(len(self.popSet)):
             cl = self.popSet[i]
-            cl.updateEpochStatus(model,model.iterationCount)
+            cl.updateEpochStatus(model)
 
-            if cl.match(state):
+            if cl.match(model,state):
                 self.matchSet.append(i)
                 setNumerositySum += cl.numerosity
 
@@ -34,10 +34,11 @@ class ClassifierSet:
         while doCovering:
             newCl = Classifier(model)
             newCl.initializeByCovering(model,setNumerositySum,state,phenotype)
-            self.addClassifierToPopulation(model,newCl,True)
-            self.matchSet.append(len(self.popSet)-1)
-            model.trackingObj.coveringCount += 1
-            doCovering = False
+            if len(newCl.specifiedAttList) > 0: #ADDED CHECK TO PREVENT FULLY GENERALIZED RULES
+                self.addClassifierToPopulation(model,newCl,True)
+                self.matchSet.append(len(self.popSet)-1)
+                model.trackingObj.coveringCount += 1
+                doCovering = False
         model.timer.stopTimeCovering()
 
     def addClassifierToPopulation(self,model,cl,covering):
@@ -78,7 +79,7 @@ class ClassifierSet:
                 self.popSet[ref].updateCorrect()
 
             self.popSet[ref].updateAccuracy()
-            self.popSet[ref].updateFitness()
+            self.popSet[ref].updateFitness(model)
 
     def doCorrectSetSubsumption(self,model):
         subsumer = None
