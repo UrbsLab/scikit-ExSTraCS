@@ -1,5 +1,6 @@
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics import balanced_accuracy_score
+from sklearn.metrics import recall_score
 import numpy as np
 from skExSTraCS.Timer import Timer
 from skExSTraCS.OfflineEnvironment import OfflineEnvironment
@@ -357,7 +358,11 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                 accuracy = 0
             aveGenerality = self.population.getAveGenerality(self)
             self.trackingObj.macroPopSize = len(self.population.popSet)
-            self.trackingObj.microPopSize = self.population.microPopSize
+            self.population.microPopSize = 0
+            for rule in self.population.popSet:
+                self.trackingObj.microPopSize += rule.numerosity
+                self.population.microPopSize += rule.numerosity
+            self.population.clearSets()
             self.trackingObj.avgIterAge = self.population.getInitStampAverage()
             self.timer.stopTimeEvaluation()
             self.timer.updateGlobalTimer()
@@ -549,7 +554,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 
     def score(self,X,y):
         predList = self.predict(X)
-        return balanced_accuracy_score(y, predList) #Make it balanced accuracy
+        return balanced_accuracy_score(y,predList)
 
     ##*************** More Evaluation Methods ****************
 

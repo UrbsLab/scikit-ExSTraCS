@@ -82,7 +82,7 @@ class IterationRecord():
         with open(filename, mode='w') as file:
             writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-            writer.writerow(headerNames+[className]+["Fitness","Accuracy","Numerosity","Avg Match Set Size","TimeStamp GA","Iteration Initialized","Specificity","Deletion Probability","Correct Count","Match Count"])
+            writer.writerow(headerNames+[className]+["Fitness","Accuracy","Numerosity","Avg Match Set Size","TimeStamp GA","Iteration Initialized","Specificity","Deletion Probability","Correct Count","Match Count","Epoch Complete"])
             classifiers = popSet
             for classifier in classifiers:
                 a = []
@@ -113,6 +113,7 @@ class IterationRecord():
                 a.append(classifier.deletionProb)
                 a.append(classifier.correctCount)
                 a.append(classifier.matchCount)
+                a.append(classifier.epochComplete)
                 writer.writerow(a)
         file.close()
 
@@ -133,7 +134,7 @@ class IterationRecord():
         with open(filename, mode='w') as file:
             writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-            writer.writerow(["Specified Values","Specified Attribute Names"]+[className]+["Fitness","Accuracy","Numerosity","Avg Match Set Size","TimeStamp GA","Iteration Initialized","Specificity","Deletion Probability","Correct Count","Match Count"])
+            writer.writerow(["Specified Values","Specified Attribute Names"]+[className]+["Fitness","Accuracy","Numerosity","Avg Match Set Size","TimeStamp GA","Iteration Initialized","Specificity","Deletion Probability","Correct Count","Match Count","Epoch Complete"])
 
             classifiers = popSet
             for classifier in classifiers:
@@ -174,5 +175,6 @@ class IterationRecord():
                 a.append(classifier.deletionProb)
                 a.append(classifier.correctCount)
                 a.append(classifier.matchCount)
+                a.append(classifier.epochComplete)
                 writer.writerow(a)
         file.close()

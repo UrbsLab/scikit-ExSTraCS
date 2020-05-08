@@ -1,7 +1,7 @@
 import copy
 class RuleCompaction:
     def __init__(self,model):
-        self.pop = model.population
+        self.pop = copy.deepcopy(model.population)
         self.originalPopLength = len(model.population.popSet)
         if model.ruleCompaction == 'Fu1':
             self.originalTrainAcc = model.getFinalTrainingAccuracy(RC=True)
@@ -19,6 +19,7 @@ class RuleCompaction:
             self.approach_QRF()
 
         model.trackingObj.RCCount = self.originalPopLength - len(self.pop.popSet)
+        model.population = self.pop
 
     def approach_Fu1(self,model):
         lastGood_popSet = sorted(self.pop.popSet, key=self.numerositySort)
@@ -212,7 +213,7 @@ class RuleCompaction:
                 retainedClassifiers.append(self.pop.popSet[highestRef])
 
             # Move to the next instance
-            model.env.newInstance(True)
+            model.env.newInstance()
             matchSet = []
             correctSet = []
 

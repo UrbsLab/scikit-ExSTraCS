@@ -29,7 +29,7 @@ class Classifier:
         self.phenotype = copy.deepcopy(toCopy.phenotype)
         self.timeStampGA = iterationCount
         self.initTimeStamp = iterationCount
-        self.aveMatchSetSize = toCopy.aveMatchSetSize
+        self.aveMatchSetSize = copy.deepcopy(toCopy.aveMatchSetSize)
         self.fitness = toCopy.fitness
         self.accuracy = toCopy.accuracy
 

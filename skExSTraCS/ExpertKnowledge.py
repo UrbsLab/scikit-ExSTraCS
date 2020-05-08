@@ -53,7 +53,7 @@ class ExpertKnowledge:
         minEK = min(self.scores)
         if minEK <= 0: #Changed to <= 0 insteadd of <0
             for i in range(len(self.scores)):
-                self.scores[i] = self.scores[i] - minEK# + model.init_fitness #0.76225 training accuracy w/ init_fitness on 20B MP 5k iter vs 0.8022 accuracy w/o.
+                self.scores[i] = self.scores[i] - minEK + model.init_fitness #0.76225 training accuracy w/ init_fitness on 20B MP 5k iter vs 0.8022 accuracy w/o.
         if sum(self.scores) == 0:
             for i in range(len(self.scores)):
                 self.scores[i] += 1

@@ -20,7 +20,7 @@ class Prediction():
 
             for ref in population.matchSet:
                 cl = population.popSet[ref]
-                self.vote[cl.phenotype] += cl.fitness * cl.numerosity
+                self.vote[cl.phenotype] += cl.fitness * cl.numerosity * model.env.formatData.classPredictionWeights[cl.phenotype]
                 self.tieBreak_Numerosity[cl.phenotype] += cl.numerosity
                 self.tieBreak_TimeStamp[cl.phenotype] += cl.initTimeStamp
 

@@ -33,7 +33,7 @@ class ClassifierSet:
         model.timer.startTimeCovering()
         while doCovering:
             newCl = Classifier(model)
-            newCl.initializeByCovering(model,setNumerositySum,state,phenotype)
+            newCl.initializeByCovering(model,setNumerositySum+1,state,phenotype)
             if len(newCl.specifiedAttList) > 0: #ADDED CHECK TO PREVENT FULLY GENERALIZED RULES
                 self.addClassifierToPopulation(model,newCl,True)
                 self.matchSet.append(len(self.popSet)-1)

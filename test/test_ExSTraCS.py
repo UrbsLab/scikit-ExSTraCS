@@ -525,6 +525,40 @@ class test_ExSTrCS(unittest.TestCase):
         self.assertEqual(clf.randomSeed,None)
 
     #Performance Tests
+    #20B MP Training Accuracy
+    def testMultiplexer(self):
+        dataPath = os.path.join(THIS_DIR, "test/DataSets/Real/Multiplexer20Modified.csv")
+        converter = StringEnumerator(dataPath,'Class')
+        headers, classLabel, dataFeatures, dataPhenotypes = converter.getParams()
+        relieffScores = [0.080835, 0.071416, 0.076315, 0.074602, 0.000877, -0.000606, 0.003651, -0.002214, -0.000608,
+                  -0.002425, 0.000013, 0.00343, -0.001186, -0.001607, 0.000061, -0.000367, 0.001698, 0.000787, 0.001014,
+                  0.001723]
+        model = ExSTraCS(learningIterations=10000, expertKnowledge=relieffScores, N=2000, nu=10)
+        model.fit(dataFeatures, dataPhenotypes)
+        self.assertTrue(self.approxEqualOrBetter(0.07,model.score(dataFeatures,dataPhenotypes),1.0,True))
 
+    #Continuous Attributes and Missing Training Accuracy
+    def testContinuousAndMissing(self):
+        dataPath = os.path.join(THIS_DIR, "test/DataSets/Real/ContAndMissing.csv")
+        converter = StringEnumerator(dataPath, 'panc_type01')
+        converter.deleteAttribute("plco_id")
+        headers, classLabel, dataFeatures, dataPhenotypes = converter.getParams()
+        model = ExSTraCS(learningIterations=10000,ruleCompaction=None)
+        model.fit(dataFeatures, dataPhenotypes)
+        score = model.score(dataFeatures,dataPhenotypes)
+        self.assertTrue(self.approxEqualOrBetter(0.1, score, 0.7, True))
+
+    def approxEqual(self,threshold,comp,right): #threshold is % tolerance
+        return abs(abs(comp-right)/right) < threshold
+
+    def approxEqualOrBetter(self,threshold,comp,right,better): #better is False when better is less, True when better is greater
+        if not better:
+            if self.approxEqual(threshold,comp,right) or comp < right:
+                return True
+            return False
+        else:
+            if self.approxEqual(threshold,comp,right) or comp > right:
+                return True
+            return False
 
 
