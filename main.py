@@ -7,6 +7,7 @@ from skExSTraCS import StringEnumerator
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import balanced_accuracy_score
 from sklearn.neural_network import MLPClassifier
+from skeLCS import eLCS
 
 converter = StringEnumerator('test/DataSets/Real/ContAndMissing.csv','panc_type01')
 converter.deleteAttribute("plco_id")
@@ -41,7 +42,8 @@ r.fit(dataFeaturesR,dataPhenotypesR)
 scores = r.feature_importances_
 
 print("Training Begins")
-model = ExSTraCS(learningIterations=10000,expertKnowledge=scores,ruleCompaction='Fu2') #PDRC/CRA2 makes minimal change, QRC/QRF do poorly
+#model = eLCS(learningIterations=10000)
+model = ExSTraCS(learningIterations=10000,expertKnowledge=scores,ruleCompaction=None) #PDRC/CRA2 makes minimal change, QRC/QRF do poorly
 model.fit(dataFeatures,dataPhenotypes)
 
 print("Evaluation Begins")
