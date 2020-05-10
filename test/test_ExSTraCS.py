@@ -9,25 +9,25 @@ if THIS_DIR[-4:] == 'test': #Patch that ensures testing from Scikit not test dir
 
 class test_ExSTrCS(unittest.TestCase):
 
-    #learningIterations
+    #learning_iterations
     def testParamLearningIterationsNonnumeric(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(learningIterations="hello")
-        self.assertTrue("learningIterations param must be nonnegative integer" in str(context.exception))
+            clf = ExSTraCS(learning_iterations="hello")
+        self.assertTrue("learning_iterations param must be nonnegative integer" in str(context.exception))
 
     def testParamLearningIterationsInvalidNumeric(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(learningIterations=3.3)
-        self.assertTrue("learningIterations param must be nonnegative integer" in str(context.exception))
+            clf = ExSTraCS(learning_iterations=3.3)
+        self.assertTrue("learning_iterations param must be nonnegative integer" in str(context.exception))
 
     def testParamLearningIterationsInvalidNumeric2(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(learningIterations=-2)
-        self.assertTrue("learningIterations param must be nonnegative integer" in str(context.exception))
+            clf = ExSTraCS(learning_iterations=-2)
+        self.assertTrue("learning_iterations param must be nonnegative integer" in str(context.exception))
 
     def testParamLearningIterations(self):
-        clf = ExSTraCS(learningIterations=2000)
-        self.assertEqual(clf.learningIterations,2000)
+        clf = ExSTraCS(learning_iterations=2000)
+        self.assertEqual(clf.learning_iterations,2000)
 
     #N
     def testParamNNonnumeric(self):
@@ -95,33 +95,33 @@ class test_ExSTrCS(unittest.TestCase):
         clf = ExSTraCS(chi=1)
         self.assertEqual(clf.chi,1)
 
-    #upsilon
+    #mu
     def testParamUpsilonInv1(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(upsilon="hello")
-        self.assertTrue("upsilon param must be float from 0 - 1" in str(context.exception))
+            clf = ExSTraCS(mu="hello")
+        self.assertTrue("mu param must be float from 0 - 1" in str(context.exception))
 
     def testParamUpsilonInv2(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(upsilon=3)
-        self.assertTrue("upsilon param must be float from 0 - 1" in str(context.exception))
+            clf = ExSTraCS(mu=3)
+        self.assertTrue("mu param must be float from 0 - 1" in str(context.exception))
 
     def testParamUpsilonInv3(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(upsilon=-1.2)
-        self.assertTrue("upsilon param must be float from 0 - 1" in str(context.exception))
+            clf = ExSTraCS(mu=-1.2)
+        self.assertTrue("mu param must be float from 0 - 1" in str(context.exception))
 
     def testParamUpsilon1(self):
-        clf = ExSTraCS(upsilon=0)
-        self.assertEqual(clf.upsilon,0)
+        clf = ExSTraCS(mu=0)
+        self.assertEqual(clf.mu,0)
 
     def testParamUpsilon2(self):
-        clf = ExSTraCS(upsilon=0.3)
-        self.assertEqual(clf.upsilon,0.3)
+        clf = ExSTraCS(mu=0.3)
+        self.assertEqual(clf.mu,0.3)
 
     def testParamUpsilon3(self):
-        clf = ExSTraCS(upsilon=1)
-        self.assertEqual(clf.upsilon,1)
+        clf = ExSTraCS(mu=1)
+        self.assertEqual(clf.mu,1)
 
     #theta_GA
     def testParamThetaGAInv1(self):
@@ -257,23 +257,23 @@ class test_ExSTrCS(unittest.TestCase):
         clf = ExSTraCS(init_fitness = 1.2)
         self.assertEqual(clf.init_fitness,1.2)
 
-    #fitnessReduction
+    #fitness_reduction
     def testFitnessReductionInv1(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(fitnessReduction="hi")
-        self.assertTrue("fitnessReduction param must be float" in str(context.exception))
+            clf = ExSTraCS(fitness_reduction="hi")
+        self.assertTrue("fitness_reduction param must be float" in str(context.exception))
 
     def testFitnessReduction1(self):
-        clf = ExSTraCS(fitnessReduction = -1)
-        self.assertEqual(clf.fitnessReduction,-1)
+        clf = ExSTraCS(fitness_reduction = -1)
+        self.assertEqual(clf.fitness_reduction,-1)
 
     def testFitnessReduction2(self):
-        clf = ExSTraCS(fitnessReduction = 3)
-        self.assertEqual(clf.fitnessReduction,3)
+        clf = ExSTraCS(fitness_reduction = 3)
+        self.assertEqual(clf.fitness_reduction,3)
 
     def testFitnessReduction3(self):
-        clf = ExSTraCS(fitnessReduction = 1.2)
-        self.assertEqual(clf.fitnessReduction,1.2)
+        clf = ExSTraCS(fitness_reduction = 1.2)
+        self.assertEqual(clf.fitness_reduction,1.2)
 
     #theta_sel
     def testParamThetaSelInv1(self):
@@ -303,237 +303,237 @@ class test_ExSTrCS(unittest.TestCase):
         clf = ExSTraCS(theta_sel=1)
         self.assertEqual(clf.theta_sel,1)
 
-    #ruleSpecificityLimit
+    #rule_specificity_limit
     def testParamRSLNonnumeric(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(ruleSpecificityLimit="hello")
-        self.assertTrue("ruleSpecificityLimit param must be nonnegative integer or None" in str(context.exception))
+            clf = ExSTraCS(rule_specificity_limit="hello")
+        self.assertTrue("rule_specificity_limit param must be nonnegative integer or None" in str(context.exception))
 
     def testParamRSLInvalidNumeric(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(ruleSpecificityLimit=3.3)
-        self.assertTrue("ruleSpecificityLimit param must be nonnegative integer or None" in str(context.exception))
+            clf = ExSTraCS(rule_specificity_limit=3.3)
+        self.assertTrue("rule_specificity_limit param must be nonnegative integer or None" in str(context.exception))
 
     def testParamRSLInvalidNumeric2(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(ruleSpecificityLimit=-2)
-        self.assertTrue("ruleSpecificityLimit param must be nonnegative integer or None" in str(context.exception))
+            clf = ExSTraCS(rule_specificity_limit=-2)
+        self.assertTrue("rule_specificity_limit param must be nonnegative integer or None" in str(context.exception))
 
     def testParamRSL(self):
-        clf = ExSTraCS(ruleSpecificityLimit=2000)
-        self.assertEqual(clf.ruleSpecificityLimit,2000)
+        clf = ExSTraCS(rule_specificity_limit=2000)
+        self.assertEqual(clf.rule_specificity_limit,2000)
 
     def testParamRSL2(self):
-        clf = ExSTraCS(ruleSpecificityLimit=None)
-        self.assertEqual(clf.ruleSpecificityLimit,None)
+        clf = ExSTraCS(rule_specificity_limit=None)
+        self.assertEqual(clf.rule_specificity_limit,None)
 
-    #doCorrectSetSubsumption
+    #do_correct_set_subsumption
     def testDoSubInvalid(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(doCorrectSetSubsumption=2)
-        self.assertTrue("doCorrectSetSubsumption param must be boolean" in str(context.exception))
+            clf = ExSTraCS(do_correct_set_subsumption=2)
+        self.assertTrue("do_correct_set_subsumption param must be boolean" in str(context.exception))
 
     def testDoSub(self):
-        clf = ExSTraCS(doCorrectSetSubsumption=True)
-        self.assertEqual(clf.doCorrectSetSubsumption,True)
+        clf = ExSTraCS(do_correct_set_subsumption=True)
+        self.assertEqual(clf.do_correct_set_subsumption,True)
 
-    #doGASubsumption
+    #do_GA_subsumption
     def testDoSub2Invalid(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(doGASubsumption=2)
-        self.assertTrue("doGASubsumption param must be boolean" in str(context.exception))
+            clf = ExSTraCS(do_GA_subsumption=2)
+        self.assertTrue("do_GA_subsumption param must be boolean" in str(context.exception))
 
     def testDoSub2(self):
-        clf = ExSTraCS(doGASubsumption=True)
-        self.assertEqual(clf.doGASubsumption,True)
+        clf = ExSTraCS(do_GA_subsumption=True)
+        self.assertEqual(clf.do_GA_subsumption,True)
 
-    #selectionMethod
+    #selection_method
     def testSelectionInvalid(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(selectionMethod="hello")
-        self.assertTrue("selectionMethod param must be 'tournament' or 'roulette'" in str(context.exception))
+            clf = ExSTraCS(selection_method="hello")
+        self.assertTrue("selection_method param must be 'tournament' or 'roulette'" in str(context.exception))
 
     def testSelection1(self):
-        clf = ExSTraCS(selectionMethod="tournament")
-        self.assertEqual(clf.selectionMethod,"tournament")
+        clf = ExSTraCS(selection_method="tournament")
+        self.assertEqual(clf.selection_method,"tournament")
 
     def testSelection2(self):
-        clf = ExSTraCS(selectionMethod="roulette")
-        self.assertEqual(clf.selectionMethod,"roulette")
+        clf = ExSTraCS(selection_method="roulette")
+        self.assertEqual(clf.selection_method,"roulette")
 
-    #doAttributeTracking
+    #do_attribute_tracking
     def testDoATInvalid(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(doAttributeTracking=2)
-        self.assertTrue("doAttributeTracking param must be boolean" in str(context.exception))
+            clf = ExSTraCS(do_attribute_tracking=2)
+        self.assertTrue("do_attribute_tracking param must be boolean" in str(context.exception))
 
     def testDoAT(self):
-        clf = ExSTraCS(doAttributeTracking=True)
-        self.assertEqual(clf.doAttributeTracking,True)
+        clf = ExSTraCS(do_attribute_tracking=True)
+        self.assertEqual(clf.do_attribute_tracking,True)
 
-    #doAttributeFeedback
+    #do_attribute_feedback
     def testDoAFInvalid(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(doAttributeFeedback=2)
-        self.assertTrue("doAttributeFeedback param must be boolean" in str(context.exception))
+            clf = ExSTraCS(do_attribute_feedback=2)
+        self.assertTrue("do_attribute_feedback param must be boolean" in str(context.exception))
 
     def testDoAF(self):
-        clf = ExSTraCS(doAttributeFeedback=True)
-        self.assertEqual(clf.doAttributeFeedback,True)
+        clf = ExSTraCS(do_attribute_feedback=True)
+        self.assertEqual(clf.do_attribute_feedback,True)
 
-    #expertKnowledge
+    #expert_knowledge
     def testEKInvalid(self):
         with self.assertRaises(Exception) as context:
-            cl = ExSTraCS(expertKnowledge=1)
-        self.assertTrue("expertKnowledge param must be None or list/ndarray" in str(context.exception))
+            cl = ExSTraCS(expert_knowledge=1)
+        self.assertTrue("expert_knowledge param must be None or list/ndarray" in str(context.exception))
 
     def testEKInvalid2(self):
         with self.assertRaises(Exception) as context:
-            cl = ExSTraCS(expertKnowledge="hello")
-        self.assertTrue("expertKnowledge param must be None or list/ndarray" in str(context.exception))
+            cl = ExSTraCS(expert_knowledge="hello")
+        self.assertTrue("expert_knowledge param must be None or list/ndarray" in str(context.exception))
 
     def testEK(self):
-        cl = ExSTraCS(expertKnowledge=[1,2,3,4])
-        self.assertEqual(cl.expertKnowledge,[1,2,3,4])
+        cl = ExSTraCS(expert_knowledge=[1,2,3,4])
+        self.assertEqual(cl.expert_knowledge,[1,2,3,4])
 
     def testEK2(self):
-        cl = ExSTraCS(expertKnowledge=np.array([1,2,3,4]))
-        self.assertTrue(np.array_equal(cl.expertKnowledge,np.array([1,2,3,4])))
+        cl = ExSTraCS(expert_knowledge=np.array([1,2,3,4]))
+        self.assertTrue(np.array_equal(cl.expert_knowledge,np.array([1,2,3,4])))
 
-    #ruleCompaction
+    #rule_compaction
     def testRCInv(self):
         with self.assertRaises(Exception) as context:
-            cl = ExSTraCS(ruleCompaction="hello")
-        self.assertTrue("ruleCompaction param must be None or 'QRF' or 'PDRC' or 'QRC' or 'CRA2' or 'Fu2' or 'Fu1'" in str(context.exception))
+            cl = ExSTraCS(rule_compaction="hello")
+        self.assertTrue("rule_compaction param must be None or 'QRF' or 'PDRC' or 'QRC' or 'CRA2' or 'Fu2' or 'Fu1'" in str(context.exception))
 
     def testRCInv2(self):
         with self.assertRaises(Exception) as context:
-            cl = ExSTraCS(ruleCompaction=2)
-        self.assertTrue("ruleCompaction param must be None or 'QRF' or 'PDRC' or 'QRC' or 'CRA2' or 'Fu2' or 'Fu1'" in str(context.exception))
+            cl = ExSTraCS(rule_compaction=2)
+        self.assertTrue("rule_compaction param must be None or 'QRF' or 'PDRC' or 'QRC' or 'CRA2' or 'Fu2' or 'Fu1'" in str(context.exception))
 
     def testRC(self):
-        cl = ExSTraCS(ruleCompaction=None)
-        self.assertEqual(cl.ruleCompaction,None)
+        cl = ExSTraCS(rule_compaction=None)
+        self.assertEqual(cl.rule_compaction,None)
 
     def testRC2(self):
-        cl = ExSTraCS(ruleCompaction='QRF')
-        self.assertEqual(cl.ruleCompaction,'QRF')
+        cl = ExSTraCS(rule_compaction='QRF')
+        self.assertEqual(cl.rule_compaction,'QRF')
 
-    #rebootFilename
+    #reboot_filename
     def testRebootFilenameInv1(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(rebootFilename=2)
-        self.assertTrue("rebootFilename param must be None or String from pickle" in str(context.exception))
+            clf = ExSTraCS(reboot_filename=2)
+        self.assertTrue("reboot_filename param must be None or String from pickle" in str(context.exception))
 
     def testRebootFilenameInv2(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(rebootFilename=True)
-        self.assertTrue("rebootFilename param must be None or String from pickle" in str(context.exception))
+            clf = ExSTraCS(reboot_filename=True)
+        self.assertTrue("reboot_filename param must be None or String from pickle" in str(context.exception))
 
     def testRebootFilename1(self):
         clf = ExSTraCS()
-        self.assertEqual(clf.rebootFilename, None)
+        self.assertEqual(clf.reboot_filename, None)
 
     def testRebootFilename2(self):
-        clf = ExSTraCS(rebootFilename=None)
-        self.assertEqual(clf.rebootFilename, None)
+        clf = ExSTraCS(reboot_filename=None)
+        self.assertEqual(clf.reboot_filename, None)
 
     def testRebootFilename3(self):
-        clf = ExSTraCS(rebootFilename='hello')
-        self.assertEqual(clf.rebootFilename, 'hello')
+        clf = ExSTraCS(reboot_filename='hello')
+        self.assertEqual(clf.reboot_filename, 'hello')
 
-    #discreteAttributeLimit
+    #discrete_attribute_limit
     def testDiscreteAttributeLimitInv1(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(discreteAttributeLimit="h")
-        self.assertTrue("discreteAttributeLimit param must be nonnegative integer or 'c' or 'd'" in str(context.exception))
+            clf = ExSTraCS(discrete_attribute_limit="h")
+        self.assertTrue("discrete_attribute_limit param must be nonnegative integer or 'c' or 'd'" in str(context.exception))
 
     def testDiscreteAttributeLimitInv2(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(discreteAttributeLimit=-10)
-        self.assertTrue("discreteAttributeLimit param must be nonnegative integer or 'c' or 'd'" in str(context.exception))
+            clf = ExSTraCS(discrete_attribute_limit=-10)
+        self.assertTrue("discrete_attribute_limit param must be nonnegative integer or 'c' or 'd'" in str(context.exception))
 
     def testDiscreteAttributeLimitInv3(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(discreteAttributeLimit=1.2)
-        self.assertTrue("discreteAttributeLimit param must be nonnegative integer or 'c' or 'd'" in str(context.exception))
+            clf = ExSTraCS(discrete_attribute_limit=1.2)
+        self.assertTrue("discrete_attribute_limit param must be nonnegative integer or 'c' or 'd'" in str(context.exception))
 
     def testDiscreteAttributeLimit1(self):
-        clf = ExSTraCS(discreteAttributeLimit=10)
-        self.assertEqual(clf.discreteAttributeLimit,10)
+        clf = ExSTraCS(discrete_attribute_limit=10)
+        self.assertEqual(clf.discrete_attribute_limit,10)
 
     def testDiscreteAttributeLimit2(self):
-        clf = ExSTraCS(discreteAttributeLimit="c")
-        self.assertEqual(clf.discreteAttributeLimit,"c")
+        clf = ExSTraCS(discrete_attribute_limit="c")
+        self.assertEqual(clf.discrete_attribute_limit,"c")
 
     def testDiscreteAttributeLimit3(self):
-        clf = ExSTraCS(discreteAttributeLimit="d")
-        self.assertEqual(clf.discreteAttributeLimit,"d")
+        clf = ExSTraCS(discrete_attribute_limit="d")
+        self.assertEqual(clf.discrete_attribute_limit,"d")
 
-    #specifiedAttributes
+    #specified_attributes
     def testParamSpecAttrNonarray(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(specifiedAttributes=2)
-        self.assertTrue("specifiedAttributes param must be ndarray" in str(context.exception))
+            clf = ExSTraCS(specified_attributes=2)
+        self.assertTrue("specified_attributes param must be ndarray" in str(context.exception))
 
     def testParamSpecAttrNonnumeric(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(specifiedAttributes=np.array([2,100,"hi",200]))
-        self.assertTrue("All specifiedAttributes elements param must be nonnegative integers" in str(context.exception))
+            clf = ExSTraCS(specified_attributes=np.array([2,100,"hi",200]))
+        self.assertTrue("All specified_attributes elements param must be nonnegative integers" in str(context.exception))
 
     def testParamSpecAttrInvalidNumeric(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(specifiedAttributes=np.array([2,100,200.2,200]))
-        self.assertTrue("All specifiedAttributes elements param must be nonnegative integers" in str(context.exception))
+            clf = ExSTraCS(specified_attributes=np.array([2,100,200.2,200]))
+        self.assertTrue("All specified_attributes elements param must be nonnegative integers" in str(context.exception))
 
     def testParamSpecAttrInvalidNumeric2(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(specifiedAttributes=np.array([2,100,-200,200]))
-        self.assertTrue("All specifiedAttributes elements param must be nonnegative integers" in str(context.exception))
+            clf = ExSTraCS(specified_attributes=np.array([2,100,-200,200]))
+        self.assertTrue("All specified_attributes elements param must be nonnegative integers" in str(context.exception))
 
     def testParamSpecAttr(self):
-        clf = ExSTraCS(specifiedAttributes=np.array([2, 100, 200, 300]))
-        self.assertTrue(np.array_equal(clf.specifiedAttributes,np.array([2, 100, 200, 300])))
+        clf = ExSTraCS(specified_attributes=np.array([2, 100, 200, 300]))
+        self.assertTrue(np.array_equal(clf.specified_attributes,np.array([2, 100, 200, 300])))
 
-    #trackAccuracyWhileFit
+    #track_accuracy_while_fit
     def testTrackAccuracyWhileFitInvalid(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(trackAccuracyWhileFit=2)
-        self.assertTrue("trackAccuracyWhileFit param must be boolean" in str(context.exception))
+            clf = ExSTraCS(track_accuracy_while_fit=2)
+        self.assertTrue("track_accuracy_while_fit param must be boolean" in str(context.exception))
 
     def testTrackAccuracyWhileFit(self):
-        clf = ExSTraCS(trackAccuracyWhileFit=True)
-        self.assertEqual(clf.trackAccuracyWhileFit,True)
+        clf = ExSTraCS(track_accuracy_while_fit=True)
+        self.assertEqual(clf.track_accuracy_while_fit,True)
 
-    #randomSeed
+    #random_state
     def testRandomSeedInv1(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(randomSeed="hello")
-        self.assertTrue("randomSeed param must be integer or None" in str(context.exception))
+            clf = ExSTraCS(random_state="hello")
+        self.assertTrue("random_state param must be integer or None" in str(context.exception))
 
     def testRandomSeedInv2(self):
         with self.assertRaises(Exception) as context:
-            clf = ExSTraCS(randomSeed=1.2)
-        self.assertTrue("randomSeed param must be integer or None" in str(context.exception))
+            clf = ExSTraCS(random_state=1.2)
+        self.assertTrue("random_state param must be integer or None" in str(context.exception))
 
     def testRandomSeed2(self):
-        clf = ExSTraCS(randomSeed=200)
-        self.assertEqual(clf.randomSeed,200)
+        clf = ExSTraCS(random_state=200)
+        self.assertEqual(clf.random_state,200)
 
     def testRandomSeed3(self):
-        clf = ExSTraCS(randomSeed=None)
-        self.assertEqual(clf.randomSeed,None)
+        clf = ExSTraCS(random_state=None)
+        self.assertEqual(clf.random_state,None)
 
     #Performance Tests
     #20B MP Training Accuracy
     def testMultiplexer(self):
         dataPath = os.path.join(THIS_DIR, "test/DataSets/Real/Multiplexer20Modified.csv")
         converter = StringEnumerator(dataPath,'Class')
-        headers, classLabel, dataFeatures, dataPhenotypes = converter.getParams()
+        headers, classLabel, dataFeatures, dataPhenotypes = converter.get_params()
         relieffScores = [0.080835, 0.071416, 0.076315, 0.074602, 0.000877, -0.000606, 0.003651, -0.002214, -0.000608,
                   -0.002425, 0.000013, 0.00343, -0.001186, -0.001607, 0.000061, -0.000367, 0.001698, 0.000787, 0.001014,
                   0.001723]
-        model = ExSTraCS(learningIterations=10000, expertKnowledge=relieffScores, N=2000, nu=10)
+        model = ExSTraCS(learning_iterations=10000, expert_knowledge=relieffScores, N=2000, nu=10)
         model.fit(dataFeatures, dataPhenotypes)
         self.assertTrue(self.approxEqualOrBetter(0.07,model.score(dataFeatures,dataPhenotypes),1.0,True))
 
@@ -541,9 +541,9 @@ class test_ExSTrCS(unittest.TestCase):
     def testContinuousAndMissing(self):
         dataPath = os.path.join(THIS_DIR, "test/DataSets/Real/ContAndMissing.csv")
         converter = StringEnumerator(dataPath, 'panc_type01')
-        converter.deleteAttribute("plco_id")
-        headers, classLabel, dataFeatures, dataPhenotypes = converter.getParams()
-        model = ExSTraCS(learningIterations=10000,ruleCompaction=None)
+        converter.delete_attribute("plco_id")
+        headers, classLabel, dataFeatures, dataPhenotypes = converter.get_params()
+        model = ExSTraCS(learning_iterations=10000,rule_compaction=None)
         model.fit(dataFeatures, dataPhenotypes)
         score = model.score(dataFeatures,dataPhenotypes)
         self.assertTrue(self.approxEqualOrBetter(0.1, score, 0.7, True))

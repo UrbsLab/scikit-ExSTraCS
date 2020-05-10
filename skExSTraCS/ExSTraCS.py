@@ -16,17 +16,17 @@ import pickle
 import random
 
 class ExSTraCS(BaseEstimator,ClassifierMixin):
-    def __init__(self,learningIterations=100000,N=1000,nu=1,chi=0.8,upsilon=0.04,theta_GA=25,theta_del=20,theta_sub=20,
-                 acc_sub=0.99,beta=0.2,delta=0.1,init_fitness=0.01,fitnessReduction=0.1,theta_sel=0.5,ruleSpecificityLimit=None,
-                 doCorrectSetSubsumption=False,doGASubsumption=True,selectionMethod='tournament',doAttributeTracking=True,
-                 doAttributeFeedback=True,expertKnowledge=None,ruleCompaction='QRF',rebootFilename=None,
-                 discreteAttributeLimit=10,specifiedAttributes=np.array([]),trackAccuracyWhileFit=False,randomSeed=None):
+    def __init__(self,learning_iterations=100000,N=1000,nu=1,chi=0.8,mu=0.04,theta_GA=25,theta_del=20,theta_sub=20,
+                 acc_sub=0.99,beta=0.2,delta=0.1,init_fitness=0.01,fitness_reduction=0.1,theta_sel=0.5,rule_specificity_limit=None,
+                 do_correct_set_subsumption=False,do_GA_subsumption=True,selection_method='tournament',do_attribute_tracking=True,
+                 do_attribute_feedback=True,expert_knowledge=None,rule_compaction='QRF',reboot_filename=None,
+                 discrete_attribute_limit=10,specified_attributes=np.array([]),track_accuracy_while_fit=False,random_state=None):
         '''
-        :param learningIterations:          Must be nonnegative integer. The number of training cycles to run.
+        :param learning_iterations:          Must be nonnegative integer. The number of training cycles to run.
         :param N:                           Must be nonnegative integer. Maximum micro classifier population size (sum of classifier numerosities).
         :param nu:                          Must be a float. Power parameter (v) used to determine the importance of high accuracy when calculating fitness.
         :param chi:                         Must be float from 0 - 1. The probability of applying crossover in the GA (X).
-        :param upsilon:                     Must be float from 0 - 1. The probability (u) of mutating an allele within an offspring
+        :param mu:                     Must be float from 0 - 1. The probability (u) of mutating an allele within an offspring
         :param theta_GA:                    Must be nonnegative float. The GA threshold. The GA is applied in a set when the average time (# of iterations) since the last GA in the correct set is greater than theta_GA.
         :param theta_del:                   Must be a nonnegative integer. The deletion experience threshold; The calculation of the deletion probability changes once this threshold is passed.
         :param theta_sub:                   Must be a nonnegative integer. The subsumption experience threshold
@@ -34,34 +34,34 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         :param beta:                        Must be float. Learning parameter; Used in calculating average correct set size
         :param delta:                       Must be float. Deletion parameter; Used in determining deletion vote calculation.
         :param init_fitness:                Must be float. The initial fitness for a new classifier. (typically very small, approaching but not equal to zero)
-        :param fitnessReduction:            Must be float. Initial fitness reduction in GA offspring rules.
+        :param fitness_reduction:            Must be float. Initial fitness reduction in GA offspring rules.
         :param theta_sel:                   Must be float from 0 - 1. The fraction of the correct set to be included in tournament selection.
-        :param ruleSpecificityLimit:        Must be nonnegative integer or None. If not None, overrides the automatically computed RSL.
-        :param doCorrectSetSubsumption:     Must be boolean. Determines if subsumption is done in [C] after [C] updates.
-        :param doGASubsumption:             Must be boolean. Determines if subsumption is done between offspring and parents after GA
-        :param selectionMethod:             Must be either "tournament" or "roulette". Determines GA selection method. Recommended: tournament
-        :param doAttributeTracking:         Must be boolean. Whether to have AT
-        :param doAttributeFeedback:         Must be boolean. Whether to have AF
-        :param expertKnowledge:             Must be np.ndarray or list or None. If None, don't use EK. If not, attribute filter scores are the array (in order)
-        :param ruleCompaction:              Must be None or String. QRF or PDRC or QRC or CRA2 or Fu2 or Fu1. If None, no rule compaction is done
-        :param rebootFilename:              Must be String or None. Filename of pickled model to be rebooted
-        :param discreteAttributeLimit:      Must be nonnegative integer OR "c" OR "d". Multipurpose param. If it is a nonnegative integer, discreteAttributeLimit determines the threshold that determines
-                                            if an attribute will be treated as a continuous or discrete attribute. For example, if discreteAttributeLimit == 10, if an attribute has more than 10 unique
+        :param rule_specificity_limit:        Must be nonnegative integer or None. If not None, overrides the automatically computed RSL.
+        :param do_correct_set_subsumption:     Must be boolean. Determines if subsumption is done in [C] after [C] updates.
+        :param do_GA_subsumption:             Must be boolean. Determines if subsumption is done between offspring and parents after GA
+        :param selection_method:             Must be either "tournament" or "roulette". Determines GA selection method. Recommended: tournament
+        :param do_attribute_tracking:         Must be boolean. Whether to have AT
+        :param do_attribute_feedback:         Must be boolean. Whether to have AF
+        :param expert_knowledge:             Must be np.ndarray or list or None. If None, don't use EK. If not, attribute filter scores are the array (in order)
+        :param rule_compaction:              Must be None or String. QRF or PDRC or QRC or CRA2 or Fu2 or Fu1. If None, no rule compaction is done
+        :param reboot_filename:              Must be String or None. Filename of pickled model to be rebooted
+        :param discrete_attribute_limit:      Must be nonnegative integer OR "c" OR "d". Multipurpose param. If it is a nonnegative integer, discrete_attribute_limit determines the threshold that determines
+                                            if an attribute will be treated as a continuous or discrete attribute. For example, if discrete_attribute_limit == 10, if an attribute has more than 10 unique
                                             values in the dataset, the attribute will be continuous. If the attribute has 10 or less unique values, it will be discrete. Alternatively,
-                                            discreteAttributeLimit can take the value of "c" or "d". See next param for this.
-        :param specifiedAttributes:         Must be an ndarray type of nonnegative integer attributeIndices (zero indexed).
+                                            discrete_attribute_limit can take the value of "c" or "d". See next param for this.
+        :param specified_attributes:         Must be an ndarray type of nonnegative integer attributeIndices (zero indexed).
                                             If "c", attributes specified by index in this param will be continuous and the rest will be discrete. If "d", attributes specified by index in this
                                             param will be discrete and the rest will be continuous.
-                                            If this value is given, and discreteAttributeLimit is not "c" or "d", discreteAttributeLimit overrides this specification
-        :param trackAccuracyWhileFit        Must be boolean. Determines if accuracy is tracked during model training
-        :param randomSeed:                  Must be an integer or None. Set a constant random seed value to some integer
+                                            If this value is given, and discrete_attribute_limit is not "c" or "d", discrete_attribute_limit overrides this specification
+        :param track_accuracy_while_fit        Must be boolean. Determines if accuracy is tracked during model training
+        :param random_state:                  Must be an integer or None. Set a constant random seed value to some integer
         '''
-        #learningIterations
-        if not self.checkIsInt(learningIterations):
-            raise Exception("learningIterations param must be nonnegative integer")
+        #learning_iterations
+        if not self.checkIsInt(learning_iterations):
+            raise Exception("learning_iterations param must be nonnegative integer")
 
-        if learningIterations < 0:
-            raise Exception("learningIterations param must be nonnegative integer")
+        if learning_iterations < 0:
+            raise Exception("learning_iterations param must be nonnegative integer")
 
         #N
         if not self.checkIsInt(N):
@@ -81,12 +81,12 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         if chi < 0 or chi > 1:
             raise Exception("chi param must be float from 0 - 1")
 
-        #upsilon
-        if not self.checkIsFloat(upsilon):
-            raise Exception("upsilon param must be float from 0 - 1")
+        #mu
+        if not self.checkIsFloat(mu):
+            raise Exception("mu param must be float from 0 - 1")
 
-        if upsilon < 0 or upsilon > 1:
-            raise Exception("upsilon param must be float from 0 - 1")
+        if mu < 0 or mu > 1:
+            raise Exception("mu param must be float from 0 - 1")
 
         #theta_GA
         if not self.checkIsFloat(theta_GA):
@@ -128,9 +128,9 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         if not self.checkIsFloat(init_fitness):
             raise Exception("init_fitness param must be float")
 
-        #fitnessReduction
-        if not self.checkIsFloat(fitnessReduction):
-            raise Exception("fitnessReduction param must be float")
+        #fitness_reduction
+        if not self.checkIsFloat(fitness_reduction):
+            raise Exception("fitness_reduction param must be float")
 
         #theta_sel
         if not self.checkIsFloat(theta_sel):
@@ -139,88 +139,88 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         if theta_sel < 0 or theta_sel > 1:
             raise Exception("theta_sel param must be float from 0 - 1")
 
-        #ruleSpecificityLimit
-        if ruleSpecificityLimit != None:
-            if not self.checkIsInt(ruleSpecificityLimit):
-                raise Exception("ruleSpecificityLimit param must be nonnegative integer or None")
+        #rule_specificity_limit
+        if rule_specificity_limit != None:
+            if not self.checkIsInt(rule_specificity_limit):
+                raise Exception("rule_specificity_limit param must be nonnegative integer or None")
 
-            if ruleSpecificityLimit < 0:
-                raise Exception("ruleSpecificityLimit param must be nonnegative integer or None")
+            if rule_specificity_limit < 0:
+                raise Exception("rule_specificity_limit param must be nonnegative integer or None")
 
-        #doCorrectSetSubsumption
-        if not(isinstance(doCorrectSetSubsumption,bool)):
-            raise Exception("doCorrectSetSubsumption param must be boolean")
+        #do_correct_set_subsumption
+        if not(isinstance(do_correct_set_subsumption,bool)):
+            raise Exception("do_correct_set_subsumption param must be boolean")
 
-        #doGASubsumption
-        if not (isinstance(doGASubsumption, bool)):
-            raise Exception("doGASubsumption param must be boolean")
+        #do_GA_subsumption
+        if not (isinstance(do_GA_subsumption, bool)):
+            raise Exception("do_GA_subsumption param must be boolean")
 
-        #selectionMethod
-        if selectionMethod != "tournament" and selectionMethod != "roulette":
-            raise Exception("selectionMethod param must be 'tournament' or 'roulette'")
+        #selection_method
+        if selection_method != "tournament" and selection_method != "roulette":
+            raise Exception("selection_method param must be 'tournament' or 'roulette'")
 
-        #doAttributeTracking
-        if not(isinstance(doAttributeTracking,bool)):
-            raise Exception("doAttributeTracking param must be boolean")
+        #do_attribute_tracking
+        if not(isinstance(do_attribute_tracking,bool)):
+            raise Exception("do_attribute_tracking param must be boolean")
 
-        #doAttributeFeedback
-        if not(isinstance(doAttributeFeedback,bool)):
-            raise Exception("doAttributeFeedback param must be boolean")
+        #do_attribute_feedback
+        if not(isinstance(do_attribute_feedback,bool)):
+            raise Exception("do_attribute_feedback param must be boolean")
 
-        #expertKnowledge
-        if not (isinstance(expertKnowledge, np.ndarray)) and not (isinstance(expertKnowledge, list)) and expertKnowledge != None:
-            raise Exception("expertKnowledge param must be None or list/ndarray")
-        if isinstance(expertKnowledge,np.ndarray):
-            expertKnowledge = expertKnowledge.tolist()
+        #expert_knowledge
+        if not (isinstance(expert_knowledge, np.ndarray)) and not (isinstance(expert_knowledge, list)) and expert_knowledge != None:
+            raise Exception("expert_knowledge param must be None or list/ndarray")
+        if isinstance(expert_knowledge,np.ndarray):
+            expert_knowledge = expert_knowledge.tolist()
 
-        #ruleCompaction
-        if ruleCompaction != None and ruleCompaction != 'QRF' and ruleCompaction != 'PDRC' and ruleCompaction != 'QRC' and ruleCompaction != 'CRA2' and ruleCompaction != 'Fu2' and ruleCompaction != 'Fu1':
-            raise Exception("ruleCompaction param must be None or 'QRF' or 'PDRC' or 'QRC' or 'CRA2' or 'Fu2' or 'Fu1'")
+        #rule_compaction
+        if rule_compaction != None and rule_compaction != 'QRF' and rule_compaction != 'PDRC' and rule_compaction != 'QRC' and rule_compaction != 'CRA2' and rule_compaction != 'Fu2' and rule_compaction != 'Fu1':
+            raise Exception("rule_compaction param must be None or 'QRF' or 'PDRC' or 'QRC' or 'CRA2' or 'Fu2' or 'Fu1'")
 
-        #rebootFilename
-        if rebootFilename != None and not isinstance(rebootFilename, str):
-            raise Exception("rebootFilename param must be None or String from pickle")
+        #reboot_filename
+        if reboot_filename != None and not isinstance(reboot_filename, str):
+            raise Exception("reboot_filename param must be None or String from pickle")
 
-        #discreteAttributeLimit
-        if discreteAttributeLimit != "c" and discreteAttributeLimit != "d":
+        #discrete_attribute_limit
+        if discrete_attribute_limit != "c" and discrete_attribute_limit != "d":
             try:
-                dpl = int(discreteAttributeLimit)
-                if not self.checkIsInt(discreteAttributeLimit):
-                    raise Exception("discreteAttributeLimit param must be nonnegative integer or 'c' or 'd'")
+                dpl = int(discrete_attribute_limit)
+                if not self.checkIsInt(discrete_attribute_limit):
+                    raise Exception("discrete_attribute_limit param must be nonnegative integer or 'c' or 'd'")
                 if dpl < 0:
-                    raise Exception("discreteAttributeLimit param must be nonnegative integer or 'c' or 'd'")
+                    raise Exception("discrete_attribute_limit param must be nonnegative integer or 'c' or 'd'")
             except:
-                raise Exception("discreteAttributeLimit param must be nonnegative integer or 'c' or 'd'")
+                raise Exception("discrete_attribute_limit param must be nonnegative integer or 'c' or 'd'")
 
-        #specifiedAttributes
-        if not (isinstance(specifiedAttributes,np.ndarray)):
-            raise Exception("specifiedAttributes param must be ndarray")
+        #specified_attributes
+        if not (isinstance(specified_attributes,np.ndarray)):
+            raise Exception("specified_attributes param must be ndarray")
 
-        for spAttr in specifiedAttributes:
+        for spAttr in specified_attributes:
             if not self.checkIsInt(spAttr):
-                raise Exception("All specifiedAttributes elements param must be nonnegative integers")
+                raise Exception("All specified_attributes elements param must be nonnegative integers")
             if int(spAttr) < 0:
-                raise Exception("All specifiedAttributes elements param must be nonnegative integers")
+                raise Exception("All specified_attributes elements param must be nonnegative integers")
 
-        #trackAccuracyWhileFit
-        if not(isinstance(trackAccuracyWhileFit,bool)):
-            raise Exception("trackAccuracyWhileFit param must be boolean")
+        #track_accuracy_while_fit
+        if not(isinstance(track_accuracy_while_fit,bool)):
+            raise Exception("track_accuracy_while_fit param must be boolean")
 
-        #randomSeed
-        if randomSeed != None:
+        #random_state
+        if random_state != None:
             try:
-                if not self.checkIsInt(randomSeed):
-                    raise Exception("randomSeed param must be integer")
-                random.seed(int(randomSeed))
-                np.random.seed(int(randomSeed))
+                if not self.checkIsInt(random_state):
+                    raise Exception("random_state param must be integer")
+                random.seed(int(random_state))
+                np.random.seed(int(random_state))
             except:
-                raise Exception("randomSeed param must be integer or None")
+                raise Exception("random_state param must be integer or None")
 
-        self.learningIterations = learningIterations
+        self.learning_iterations = learning_iterations
         self.N = N
         self.nu = nu
         self.chi = chi
-        self.upsilon = upsilon
+        self.mu = mu
         self.theta_GA = theta_GA
         self.theta_del = theta_del
         self.theta_sub = theta_sub
@@ -228,28 +228,28 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.beta = beta
         self.delta = delta
         self.init_fitness = init_fitness
-        self.fitnessReduction = fitnessReduction
+        self.fitness_reduction = fitness_reduction
         self.theta_sel = theta_sel
-        self.ruleSpecificityLimit = ruleSpecificityLimit
-        self.doCorrectSetSubsumption = doCorrectSetSubsumption
-        self.doGASubsumption = doGASubsumption
-        self.selectionMethod = selectionMethod
-        self.doAttributeTracking = doAttributeTracking
-        self.doAttributeFeedback = doAttributeFeedback
-        if not (isinstance(expertKnowledge, np.ndarray)) and not (isinstance(expertKnowledge, list)):
+        self.rule_specificity_limit = rule_specificity_limit
+        self.do_correct_set_subsumption = do_correct_set_subsumption
+        self.do_GA_subsumption = do_GA_subsumption
+        self.selection_method = selection_method
+        self.do_attribute_tracking = do_attribute_tracking
+        self.do_attribute_feedback = do_attribute_feedback
+        if not (isinstance(expert_knowledge, np.ndarray)) and not (isinstance(expert_knowledge, list)):
             self.doExpertKnowledge = False
         else:
             self.doExpertKnowledge = True
-        self.expertKnowledge = expertKnowledge
-        self.ruleCompaction = ruleCompaction
-        self.rebootFilename = rebootFilename
-        self.discreteAttributeLimit = discreteAttributeLimit
-        self.specifiedAttributes = specifiedAttributes
-        self.trackAccuracyWhileFit = trackAccuracyWhileFit
-        self.randomSeed = randomSeed
+        self.expert_knowledge = expert_knowledge
+        self.rule_compaction = rule_compaction
+        self.reboot_filename = reboot_filename
+        self.discrete_attribute_limit = discrete_attribute_limit
+        self.specified_attributes = specified_attributes
+        self.track_accuracy_while_fit = track_accuracy_while_fit
+        self.random_state = random_state
 
         self.hasTrained = False
-        self.trackingObj = tempTrackingObj()
+        self.trackingObj = TempTrackingObj()
         self.record = IterationRecord()
 
     def checkIsInt(self, num):
@@ -297,9 +297,9 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.movingAvgCount = 50
         self.env = OfflineEnvironment(X,y,self)
         aveGenerality = 0
-        aveGeneralityFreq = min(self.env.formatData.numTrainInstances, int(self.learningIterations / 20) + 1)
+        aveGeneralityFreq = min(self.env.formatData.numTrainInstances, int(self.learning_iterations / 20) + 1)
 
-        if self.rebootFilename == None:
+        if self.reboot_filename == None:
             self.timer = Timer()
             self.population = ClassifierSet()
         else:
@@ -308,22 +308,22 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.timer.startTimeInit()
 
         if self.doExpertKnowledge:
-            if len(self.expertKnowledge) != self.env.formatData.numAttributes:
+            if len(self.expert_knowledge) != self.env.formatData.numAttributes:
                 raise Exception("length of expertKnowledge param must match the # of data instance attributes")
 
         if self.doExpertKnowledge:
             self.timer.startTimeEK()
             self.EK = ExpertKnowledge(self)
             self.timer.stopTimeEK()
-        if self.doAttributeTracking and (self.rebootFilename == None or (self.rebootFilename != None and self.AT == None)):
+        if self.do_attribute_tracking and (self.reboot_filename == None or (self.reboot_filename != None and self.AT == None)):
             self.timer.startTimeAT()
             self.AT = AttributeTracking(self)
             self.timer.stopTimeAT()
-        elif not self.doAttributeTracking and self.rebootFilename == None:
+        elif not self.do_attribute_tracking and self.reboot_filename == None:
             self.AT = None
         self.timer.stopTimeInit()
 
-        while self.iterationCount < self.learningIterations:
+        while self.iterationCount < self.learning_iterations:
             state_phenotype = self.env.getTrainInstance()
             self.runIteration(state_phenotype)
 
@@ -346,7 +346,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 
         self.preRCPop = copy.deepcopy(self.population.popSet)
         #Rule Compaction
-        if self.ruleCompaction != None:
+        if self.rule_compaction != None:
             self.trackingObj.resetAll()
             self.timer.startTimeRuleCmp()
             RuleCompaction(self)
@@ -390,7 +390,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.population.makeMatchSet(self,state_phenotype)
 
         #Track Training Accuracy
-        if self.trackAccuracyWhileFit:
+        if self.track_accuracy_while_fit:
             self.timer.startTimeEvaluation()
             prediction = Prediction(self,self.population)
             phenotypePrediction = prediction.getDecision()
@@ -413,16 +413,16 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.population.updateSets(self)
 
         #[C] Subsumption
-        if self.doCorrectSetSubsumption:
+        if self.do_correct_set_subsumption:
             self.timer.startTimeSubsumption()
-            self.population.doCorrectSetSubsumption(self)
+            self.population.do_correct_set_subsumption(self)
             self.timer.stopTimeSubsumption()
 
         #AT
-        if self.doAttributeTracking:
+        if self.do_attribute_tracking:
             self.timer.startTimeAT()
             self.AT.updateAttTrack(self,self.population)
-            if self.doAttributeFeedback:
+            if self.do_attribute_feedback:
                 self.AT.updatePercent(self)
                 self.AT.genTrackProb(self)
             self.timer.stopTimeAT()
@@ -444,13 +444,13 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 
     ##*************** Population Reboot ****************
     def saveFinalMetrics(self):
-        self.finalMetrics = [self.learningIterations,self.timer.globalTime, self.timer.globalMatching,self.timer.globalCovering,
+        self.finalMetrics = [self.learning_iterations,self.timer.globalTime, self.timer.globalMatching,self.timer.globalCovering,
                              self.timer.globalCrossover, self.timer.globalMutation, self.timer.globalAT,self.timer.globalEK,
                              self.timer.globalInit, self.timer.globalAdd, self.timer.globalRuleCmp,self.timer.globalDeletion,
                              self.timer.globalSubsumption, self.timer.globalSelection, self.timer.globalEvaluation,copy.deepcopy(self.AT),
                              copy.deepcopy(self.population.popSet),self.preRCPop]
 
-    def pickleModel(self,filename=None,saveRCPop=False):
+    def pickle_model(self,filename=None,saveRCPop=False):
         if self.hasTrained:
             if filename == None:
                 filename = 'pickled'+str(int(time.time()))
@@ -464,7 +464,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             outfile.close()
 
     def rebootPopulation(self):
-        file = open(self.rebootFilename,'rb')
+        file = open(self.reboot_filename,'rb')
         rawData = pickle.load(file)
         file.close()
 
@@ -491,7 +491,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.timer.globalSubsumption = rawData[12]
         self.timer.globalSelection = rawData[13]
         self.timer.globalEvaluation = rawData[14]
-        self.learningIterations += rawData[0]
+        self.learning_iterations += rawData[0]
         self.iterationCount += rawData[0]
         self.AT = rawData[15]
 
@@ -558,14 +558,14 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 
     ##*************** More Evaluation Methods ****************
 
-    def getFinalTrainingAccuracy(self,RC=False):
+    def get_final_training_accuracy(self,RC=False):
         if self.hasTrained or RC:
             originalTrainingData = self.env.formatData.savedRawTrainingData
             return self.score(originalTrainingData[0], originalTrainingData[1])
         else:
             raise Exception("There is no final training accuracy to return, as the ExSTraCS model has not been trained")
 
-    def getFinalInstanceCoverage(self):
+    def get_final_instance_coverage(self):
         if self.hasTrained:
             numCovered = 0
             originalTrainingData = self.env.formatData.savedRawTrainingData
@@ -579,25 +579,25 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         else:
             raise Exception("There is no final instance coverage to return, as the ExSTraCS model has not been trained")
 
-    def getFinalAttributeSpecificityList(self):
+    def get_final_attribute_specificity_list(self):
         if self.hasTrained:
             return self.population.getAttributeSpecificityList(self)
         else:
             raise Exception("There is no final attribute specificity list to return, as the ExSTraCS model has not been trained")
 
-    def getFinalAttributeAccuracyList(self):
+    def get_final_attribute_accuracy_list(self):
         if self.hasTrained:
             return self.population.getAttributeAccuracyList(self)
         else:
             raise Exception("There is no final attribute accuracy list to return, as the ExSTraCS model has not been trained")
 
-    def getFinalAttributeTrackingSums(self):
+    def get_final_attribute_tracking_sums(self):
         if self.hasTrained:
             return self.AT.getSumGlobalAttTrack(self)
         else:
             raise Exception("There are no final attribute tracking sums to return, as the ExSTraCS model has not been trained")
 
-    def getFinalAttributeCooccurences(self,headers,maxNumAttributesToTrack=50):
+    def get_final_attribute_coocurrences(self,headers,maxNumAttributesToTrack=50):
         #Return a 2D list of [[attr1Name, attr2Name, specificity, accuracy weighted specificity]...]
         if self.hasTrained:
             if not isinstance(headers,np.ndarray):
@@ -610,7 +610,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                 for i in range(0,self.env.formatData.numAttributes):
                     attList.append(i)
             else:
-                attList = sorted(self.getFinalAttributeSpecificityList(),reverse=True)[:maxNumAttributesToTrack]
+                attList = sorted(self.get_final_attribute_specificity_list(),reverse=True)[:maxNumAttributesToTrack]
 
             comboList = []
             for i in range(0,len(attList)-1):
@@ -633,13 +633,13 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                 "There are no final attribute cooccurences to return, as the ExSTraCS model has not been trained")
 
     ##Export Methods##
-    def exportIterationTrackingData(self,filename='iterationData.csv'):
+    def export_iteration_tracking_data(self,filename='iterationData.csv'):
         if self.hasTrained:
             self.record.exportTrackingToCSV(filename)
         else:
             raise Exception("There is no tracking data to export, as the ExSTraCS model has not been trained")
 
-    def exportFinalRulePopulation(self,headerNames=np.array([]),className="phenotype",filename='populationData.csv',DCAL=True,RCPopulation=False):
+    def export_final_rule_population(self,headerNames=np.array([]),className="phenotype",filename='populationData.csv',DCAL=True,RCPopulation=False):
         if self.hasTrained:
             if RCPopulation:
                 popSet = self.population.popSet
@@ -653,7 +653,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         else:
             raise Exception("There is no rule population to export, as the ExSTraCS model has not been trained")
 
-class tempTrackingObj():
+class TempTrackingObj():
     #Tracks stats of every iteration (except accuracy, avg generality, and times)
     def __init__(self):
         self.macroPopSize = 0

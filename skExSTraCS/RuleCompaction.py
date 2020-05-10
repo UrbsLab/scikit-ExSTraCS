@@ -3,19 +3,19 @@ class RuleCompaction:
     def __init__(self,model):
         self.pop = copy.deepcopy(model.population)
         self.originalPopLength = len(model.population.popSet)
-        if model.ruleCompaction == 'Fu1':
-            self.originalTrainAcc = model.getFinalTrainingAccuracy(RC=True)
+        if model.rule_compaction == 'Fu1':
+            self.originalTrainAcc = model.get_final_training_accuracy(RC=True)
             self.approach_Fu1(model)
-        elif model.ruleCompaction == 'Fu2':
-            self.originalTrainAcc = model.getFinalTrainingAccuracy(RC=True)
+        elif model.rule_compaction == 'Fu2':
+            self.originalTrainAcc = model.get_final_training_accuracy(RC=True)
             self.approach_Fu2(model)
-        elif model.ruleCompaction == 'CRA2':
+        elif model.rule_compaction == 'CRA2':
             self.approach_CRA2(model)
-        elif model.ruleCompaction == 'QRC':
+        elif model.rule_compaction == 'QRC':
             self.approach_QRC(model)
-        elif model.ruleCompaction == 'PDRC':
+        elif model.rule_compaction == 'PDRC':
             self.approach_PDRC(model)
-        elif model.ruleCompaction == 'QRF':
+        elif model.rule_compaction == 'QRF':
             self.approach_QRF()
 
         model.trackingObj.RCCount = self.originalPopLength - len(self.pop.popSet)
@@ -29,7 +29,7 @@ class RuleCompaction:
         keepGoing = True
         while keepGoing:
             del self.pop.popSet[0]  # Remove next classifier
-            newAccuracy = model.getFinalTrainingAccuracy(RC=True)  # Perform classifier set training accuracy evaluation
+            newAccuracy = model.get_final_training_accuracy(RC=True)  # Perform classifier set training accuracy evaluation
 
             if newAccuracy < self.originalTrainAcc:
                 keepGoing = False
@@ -45,7 +45,7 @@ class RuleCompaction:
         for i in range(len(self.pop.popSet)):
             heldClassifier = self.pop.popSet[0]
             del self.pop.popSet[0]
-            newAccuracy = model.getFinalTrainingAccuracy(RC=True)  # Perform classifier set training accuracy evaluation
+            newAccuracy = model.get_final_training_accuracy(RC=True)  # Perform classifier set training accuracy evaluation
 
             if newAccuracy < RefAccuracy:
                 retainedClassifiers.append(heldClassifier)
@@ -136,7 +136,7 @@ class RuleCompaction:
         keepGoing = True
         while keepGoing:
             del self.pop.popSet[0]  # Remove next classifier
-            newAccuracy = model.getFinalTrainingAccuracy(RC=True)  # Perform classifier set training accuracy evaluation
+            newAccuracy = model.get_final_training_accuracy(RC=True)  # Perform classifier set training accuracy evaluation
             if newAccuracy < self.originalTrainAcc:
                 keepGoing = False
                 self.pop.popSet = lastGood_popSet[:]
@@ -151,7 +151,7 @@ class RuleCompaction:
         for i in range(len(self.pop.popSet)):
             heldClassifier = self.pop.popSet[0]
             del self.pop.popSet[0]
-            newAccuracy = model.getFinalTrainingAccuracy(RC=True)  # Perform classifier set training accuracy evaluation
+            newAccuracy = model.get_final_training_accuracy(RC=True)  # Perform classifier set training accuracy evaluation
 
             if newAccuracy < RefAccuracy:
                 retainedClassifiers.append(heldClassifier)
@@ -162,12 +162,12 @@ class RuleCompaction:
         # STAGE 3----------------------------------------------------------------------------------------------------------------------
         Sort_popSet = sorted(self.pop.popSet, key=self.numerositySort, reverse=True)
         self.pop.popSet = Sort_popSet[:]
-        RefAccuracy = model.getFinalTrainingAccuracy(RC=True)
+        RefAccuracy = model.get_final_training_accuracy(RC=True)
 
         for i in range(len(self.pop.popSet)):
             heldClassifier = self.pop.popSet[0]
             del self.pop.popSet[0]
-            newAccuracy = model.getFinalTrainingAccuracy(RC=True)  # Perform classifier set training accuracy evaluation
+            newAccuracy = model.get_final_training_accuracy(RC=True)  # Perform classifier set training accuracy evaluation
 
             if newAccuracy < RefAccuracy:
                 self.pop.popSet.append(heldClassifier)

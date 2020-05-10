@@ -31,7 +31,7 @@ In addition, powerful data tracking collection methods are built into the scikit
   <li>Times for matching, deletion, subsumption, selection, evaluation</li>
 </ul>
 
-And many more... These values can then be exported as a csv after training is complete for analysis using the built in "exportIterationTrackingData" method.
+And many more... These values can then be exported as a csv after training is complete for analysis using the built in "export_iteration_tracking_data" method.
 
 In addition, the package includes functionality that allows the final rule population to be exported as a csv after training.
 
@@ -64,7 +64,7 @@ relieff.fit(dataFeatures,dataPhenotypes)
 scores = relieff.feature_importances_
 
 #Initialize ExSTraCS Model
-model = ExSTraCS(learningIterations = 5000,expertKnowledge=scores)
+model = ExSTraCS(learning_iterations = 5000,expert_knowledge=scores)
 
 #3-fold CV
 print(np.mean(cross_val_score(model,dataFeatures,dataPhenotypes,cv=3)))

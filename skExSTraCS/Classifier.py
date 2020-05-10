@@ -39,7 +39,7 @@ class Classifier:
         self.aveMatchSetSize = setSize
         self.phenotype = phenotype
 
-        toSpecify = random.randint(1, model.ruleSpecificityLimit)
+        toSpecify = random.randint(1, model.rule_specificity_limit)
         if model.doExpertKnowledge:
             i = 0
             while len(self.specifiedAttList) < toSpecify and i < model.env.formatData.numAttributes - 1:
@@ -176,7 +176,7 @@ class Classifier:
         p_self_specifiedAttList = copy.deepcopy(self.specifiedAttList)
         p_cl_specifiedAttList = copy.deepcopy(cl.specifiedAttList)
 
-        useAT = model.doAttributeFeedback and random.random() < model.AT.percent
+        useAT = model.do_attribute_feedback and random.random() < model.AT.percent
 
         comboAttList = []
         for i in p_self_specifiedAttList:
@@ -254,9 +254,9 @@ class Classifier:
                     pass
 
         #Specification Limit Check
-        if len(self.specifiedAttList) > model.ruleSpecificityLimit:
+        if len(self.specifiedAttList) > model.rule_specificity_limit:
             self.specLimitFix(model,self)
-        if len(cl.specifiedAttList) > model.ruleSpecificityLimit:
+        if len(cl.specifiedAttList) > model.rule_specificity_limit:
             self.specLimitFix(model,cl)
 
         tempList1 = copy.deepcopy(p_self_specifiedAttList)
@@ -269,9 +269,9 @@ class Classifier:
 
     def specLimitFix(self, model, cl):
         """ Lowers classifier specificity to specificity limit. """
-        if model.doAttributeFeedback:
+        if model.do_attribute_feedback:
             # Identify 'toRemove' attributes with lowest AT scores
-            while len(cl.specifiedAttList) > model.ruleSpecificityLimit:
+            while len(cl.specifiedAttList) > model.rule_specificity_limit:
                 minVal = model.AT.getTrackProb()[cl.specifiedAttList[0]]
                 minAtt = cl.specifiedAttList[0]
                 for j in cl.specifiedAttList:
@@ -284,7 +284,7 @@ class Classifier:
 
         else:
             # Randomly pick 'toRemove'attributes to be generalized
-            toRemove = len(cl.specifiedAttList) - model.ruleSpecificityLimit
+            toRemove = len(cl.specifiedAttList) - model.rule_specificity_limit
             genTarget = random.sample(cl.specifiedAttList, toRemove)
             for j in genTarget:
                 i = cl.specifiedAttList.index(j)  # reference to the position of the attribute in the rule representation
@@ -302,13 +302,13 @@ class Classifier:
     def mutation(self,model,state):
         """ Mutates the condition of the classifier. Also handles phenotype mutation. This is a niche mutation, which means that the resulting classifier will still match the current instance.  """
         pressureProb = 0.5  # Probability that if EK is activated, it will be applied.
-        useAT = model.doAttributeFeedback and random.random() < model.AT.percent
+        useAT = model.do_attribute_feedback and random.random() < model.AT.percent
         changed = False
 
         steps = 0
         keepGoing = True
         while keepGoing:
-            if random.random() < model.upsilon:
+            if random.random() < model.mu:
                 steps += 1
             else:
                 keepGoing = False
@@ -318,8 +318,8 @@ class Classifier:
             lowLim = 1
         else:
             lowLim = len(self.specifiedAttList) - steps
-        if (len(self.specifiedAttList) + steps) >= model.ruleSpecificityLimit:
-            highLim = model.ruleSpecificityLimit
+        if (len(self.specifiedAttList) + steps) >= model.rule_specificity_limit:
+            highLim = model.rule_specificity_limit
         else:
             highLim = len(self.specifiedAttList) + steps
         if len(self.specifiedAttList) == 0:
@@ -329,7 +329,7 @@ class Classifier:
         newRuleSpec = random.randint(lowLim, highLim)
 
         # MAINTAIN SPECIFICITY
-        if newRuleSpec == len(self.specifiedAttList) and random.random() < (1 - model.upsilon):
+        if newRuleSpec == len(self.specifiedAttList) and random.random() < (1 - model.mu):
             #Remove random condition element
             if not model.doExpertKnowledge or random.random() > pressureProb:
                 genTarget = random.sample(self.specifiedAttList,1)
@@ -363,7 +363,7 @@ class Classifier:
                     self.specifiedAttList.append(specTarget[0])
                     self.condition.append(self.buildMatch(model,specTarget[0],state))  # buildMatch handles both discrete and continuous attributes
                     changed = True
-                if len(self.specifiedAttList) > model.ruleSpecificityLimit:
+                if len(self.specifiedAttList) > model.rule_specificity_limit:
                     self.specLimitFix(model,self)
 
         #Increase Specificity

@@ -17,7 +17,7 @@ class DataManagement:
         self.phenotypeRange = None  # Stores the difference between the maximum and minimum values for a continuous phenotype
         self.isDefault = True  # Is discrete attribute limit an int or string
         try:
-            int(model.discreteAttributeLimit)
+            int(model.discrete_attribute_limit)
         except:
             self.isDefault = False
 
@@ -34,13 +34,13 @@ class DataManagement:
         self.characterizeAttributes(dataFeatures, model)
 
         #Rule Specificity Limit
-        if model.ruleSpecificityLimit == None:
+        if model.rule_specificity_limit == None:
             i = 1
             uniqueCombinations = math.pow(self.averageStateCount,i)
             while uniqueCombinations < self.numTrainInstances:
                 i += 1
                 uniqueCombinations = math.pow(self.averageStateCount,i)
-            model.ruleSpecificityLimit = min(i,self.numAttributes)
+            model.rule_specificity_limit = min(i,self.numAttributes)
 
         self.trainFormatted = self.formatData(dataFeatures, dataPhenotypes, model)  # The only np array
 
@@ -70,7 +70,7 @@ class DataManagement:
             if self.isDefault:
                 currentInstanceIndex = 0
                 stateDict = {}
-                while attIsDiscrete and len(list(stateDict.keys())) <= model.discreteAttributeLimit and currentInstanceIndex < self.numTrainInstances:
+                while attIsDiscrete and len(list(stateDict.keys())) <= model.discrete_attribute_limit and currentInstanceIndex < self.numTrainInstances:
                     target = features[currentInstanceIndex,att]
                     if target in list(stateDict.keys()):
                         stateDict[target] += 1
@@ -80,15 +80,15 @@ class DataManagement:
                         stateDict[target] = 1
                     currentInstanceIndex+=1
 
-                if len(list(stateDict.keys())) > model.discreteAttributeLimit:
+                if len(list(stateDict.keys())) > model.discrete_attribute_limit:
                     attIsDiscrete = False
-            elif model.discreteAttributeLimit == "c":
-                if att in model.specifiedAttributes:
+            elif model.discrete_attribute_limit == "c":
+                if att in model.specified_attributes:
                     attIsDiscrete = False
                 else:
                     attIsDiscrete = True
-            elif model.discreteAttributeLimit == "d":
-                if att in model.specifiedAttributes:
+            elif model.discrete_attribute_limit == "d":
+                if att in model.specified_attributes:
                     attIsDiscrete = True
                 else:
                     attIsDiscrete = False

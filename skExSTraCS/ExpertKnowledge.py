@@ -5,10 +5,10 @@ class ExpertKnowledge:
         self.scores = None
 
         if model.doExpertKnowledge:
-            if not isinstance(model.expertKnowledge,list):
-                self.scores = model.expertKnowledge.tolist()
+            if not isinstance(model.expert_knowledge,list):
+                self.scores = model.expert_knowledge.tolist()
             else:
-                self.scores = model.expertKnowledge
+                self.scores = model.expert_knowledge
         else:
             raise Exception("EK is invalid. This should never happen")
 

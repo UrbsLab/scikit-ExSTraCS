@@ -81,7 +81,7 @@ class ClassifierSet:
             self.popSet[ref].updateAccuracy()
             self.popSet[ref].updateFitness(model)
 
-    def doCorrectSetSubsumption(self,model):
+    def do_correct_set_subsumption(self,model):
         subsumer = None
         for ref in self.correctSet:
             cl = self.popSet[ref]
@@ -136,11 +136,11 @@ class ClassifierSet:
 
         #Select Parents
         model.timer.startTimeSelection()
-        if model.selectionMethod == "roulette":
+        if model.selection_method == "roulette":
             selectList = self.selectClassifierRW()
             clP1 = selectList[0]
             clP2 = selectList[1]
-        elif model.selectionMethod == "tournament":
+        elif model.selection_method == "tournament":
             selectList = self.selectClassifierT(model)
             clP1 = selectList[0]
             clP2 = selectList[1]
@@ -163,12 +163,12 @@ class ClassifierSet:
 
         if changed:
             cl1.setAccuracy((cl1.accuracy + cl2.accuracy)/2.0)
-            cl1.setFitness(model.fitnessReduction * (cl1.fitness + cl2.fitness)/2.0)
+            cl1.setFitness(model.fitness_reduction * (cl1.fitness + cl2.fitness)/2.0)
             cl2.setAccuracy(cl1.accuracy)
             cl2.setFitness(cl1.fitness)
         else:
-            cl1.setFitness(model.fitnessReduction * cl1.fitness)
-            cl2.setFitness(model.fitnessReduction * cl2.fitness)
+            cl1.setFitness(model.fitness_reduction * cl1.fitness)
+            cl2.setFitness(model.fitness_reduction * cl2.fitness)
 
         #Mutation
         model.timer.startTimeMutation()
@@ -190,7 +190,7 @@ class ClassifierSet:
             self.insertDiscoveredClassifiers(model,cl1, cl2, clP1, clP2) #Includes subsumption if activated.
 
     def insertDiscoveredClassifiers(self,model,cl1,cl2,clP1,clP2):
-        if model.doGASubsumption:
+        if model.do_GA_subsumption:
             model.timer.startTimeSubsumption()
             if len(cl1.specifiedAttList) > 0:
                 self.subsumeClassifier(model,cl1, clP1, clP2)
