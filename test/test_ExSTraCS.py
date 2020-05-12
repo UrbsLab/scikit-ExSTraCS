@@ -438,10 +438,6 @@ class test_ExSTrCS(unittest.TestCase):
         clf = ExSTraCS(reboot_filename=None)
         self.assertEqual(clf.reboot_filename, None)
 
-    def testRebootFilename3(self):
-        clf = ExSTraCS(reboot_filename='hello')
-        self.assertEqual(clf.reboot_filename, 'hello')
-
     #discrete_attribute_limit
     def testDiscreteAttributeLimitInv1(self):
         with self.assertRaises(Exception) as context:

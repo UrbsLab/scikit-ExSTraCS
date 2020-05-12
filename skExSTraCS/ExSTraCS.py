@@ -235,7 +235,10 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.do_GA_subsumption = do_GA_subsumption
         self.selection_method = selection_method
         self.do_attribute_tracking = do_attribute_tracking
-        self.do_attribute_feedback = do_attribute_feedback
+        if self.do_attribute_tracking == False:
+            self.do_attribute_feedback = False
+        else:
+            self.do_attribute_feedback = do_attribute_feedback
         if not (isinstance(expert_knowledge, np.ndarray)) and not (isinstance(expert_knowledge, list)):
             self.doExpertKnowledge = False
         else:
@@ -251,6 +254,14 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.hasTrained = False
         self.trackingObj = TempTrackingObj()
         self.record = IterationRecord()
+
+        #Reboot Population
+        if self.reboot_filename != None:
+            self.rebootPopulation()
+            self.hasTrained = True
+        else:
+            self.iterationCount = 0
+            self.population = ClassifierSet()
 
     def checkIsInt(self, num):
         try:
@@ -289,20 +300,30 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         except:
             raise Exception("X and y must be fully numeric")
 
-        self.iterationCount = 0
-        self.trackingAccuracy = []
-        self.movingAvgCount = 50
-        self.env = OfflineEnvironment(X,y,self)
-        aveGenerality = 0
-        aveGeneralityFreq = min(self.env.formatData.numTrainInstances, int(self.learning_iterations / 20) + 1)
+        # Handle repeated fit calls
+        if self.learning_iterations == self.iterationCount and self.reboot_filename != None:
+            raise Exception("You cannot call fit(X,y) a second time with a rebooted population.")
 
+        if self.reboot_filename == None and self.hasTrained:
+            self.iterationCount = 0
+            self.population = ClassifierSet()
+
+        # Reboot Timer, if necessary
         if self.reboot_filename == None:
             self.timer = Timer()
-            self.population = ClassifierSet()
         else:
-            self.rebootPopulation()
+            self.rebootTimer()
 
         self.timer.startTimeInit()
+
+        # Set up offline environment w/ dataset
+        self.env = OfflineEnvironment(X,y,self)
+
+        # Set up tracking metrics
+        self.trackingAccuracy = []
+        self.movingAvgCount = 50
+        aveGenerality = 0
+        aveGeneralityFreq = min(self.env.formatData.numTrainInstances, 1000)
 
         if self.doExpertKnowledge:
             if len(self.expert_knowledge) != self.env.formatData.numAttributes:
@@ -445,10 +466,10 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                              self.timer.globalCrossover, self.timer.globalMutation, self.timer.globalAT,self.timer.globalEK,
                              self.timer.globalInit, self.timer.globalAdd, self.timer.globalRuleCmp,self.timer.globalDeletion,
                              self.timer.globalSubsumption, self.timer.globalSelection, self.timer.globalEvaluation,copy.deepcopy(self.AT),
-                             copy.deepcopy(self.population.popSet),self.preRCPop]
+                             copy.deepcopy(self.env),copy.deepcopy(self.population.popSet),self.preRCPop]
 
     def pickle_model(self,filename=None,saveRCPop=False):
-        if self.hasTrained:
+        if self.hasTrained and self.learning_iterations == self.iterationCount: # Check hasFit, and there is new stuff to pickle
             if filename == None:
                 filename = 'pickled'+str(int(time.time()))
             outfile = open(filename, 'wb')
@@ -459,6 +480,10 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                 finalMetricsCopy.pop(len(self.finalMetrics) - 1)
             pickle.dump(finalMetricsCopy, outfile)
             outfile.close()
+        elif self.hasTrained and self.learning_iterations != self.iterationCount:
+            raise Exception("Pickle not allowed, as there is nothing new to pickle.")
+        else:
+            raise Exception("There is no final model to pickle, as the ExSTraCS model has not been trained")
 
     def rebootPopulation(self):
         file = open(self.reboot_filename,'rb')
@@ -473,6 +498,16 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         set.popSet = popSet
         set.microPopSize = microPopSize
         self.population = set
+        self.learning_iterations += rawData[0]
+        self.iterationCount = rawData[0]
+        self.AT = rawData[15]
+        self.env = rawData[16]
+
+    def rebootTimer(self):
+        file = open(self.reboot_filename, 'rb')
+        rawData = pickle.load(file)
+        file.close()
+
         self.timer = Timer()
         self.timer.addedTime = rawData[1]
         self.timer.globalMatching = rawData[2]
@@ -488,9 +523,6 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.timer.globalSubsumption = rawData[12]
         self.timer.globalSelection = rawData[13]
         self.timer.globalEvaluation = rawData[14]
-        self.learning_iterations += rawData[0]
-        self.iterationCount += rawData[0]
-        self.AT = rawData[15]
 
     ##*************** Predict and Score ****************
     def predict(self, X):
@@ -589,8 +621,10 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             raise Exception("There is no final attribute accuracy list to return, as the ExSTraCS model has not been trained")
 
     def get_final_attribute_tracking_sums(self):
-        if self.hasTrained:
+        if self.hasTrained and self.AT != None:
             return self.AT.getSumGlobalAttTrack(self)
+        elif not self.do_attribute_tracking:
+            raise Exception("There are no final attribute tracking sums to return, as AT was False")
         else:
             raise Exception("There are no final attribute tracking sums to return, as the ExSTraCS model has not been trained")
 
@@ -649,6 +683,17 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                 self.record.exportPop(self,popSet,headerNames, className, filename)
         else:
             raise Exception("There is no rule population to export, as the ExSTraCS model has not been trained")
+
+    ##Rule Compaction Method ##
+    def post_training_rule_compaction(self,method='QRF'):
+        if self.hasTrained:
+            oldRC = copy.deepcopy(self.rule_compaction)
+            self.rule_compaction = method
+            RuleCompaction(self)
+            self.rule_compaction = oldRC
+            self.saveFinalMetrics()
+        else:
+            raise Exception("There is no rule population to compact, as the ExSTraCS model has not been trained")
 
 class TempTrackingObj():
     #Tracks stats of every iteration (except accuracy, avg generality, and times)
