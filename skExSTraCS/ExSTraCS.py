@@ -211,8 +211,6 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             try:
                 if not self.checkIsInt(random_state):
                     raise Exception("random_state param must be integer")
-                random.seed(int(random_state))
-                np.random.seed(int(random_state))
             except:
                 raise Exception("random_state param must be integer or None")
 
@@ -303,6 +301,10 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         # Handle repeated fit calls
         if self.learning_iterations == self.iterationCount and self.reboot_filename != None:
             raise Exception("You cannot call fit(X,y) a second time with a rebooted population.")
+
+        if self.random_state != None:
+            random.seed(int(self.random_state))
+            np.random.seed(int(self.random_state))
 
         if self.reboot_filename == None and self.hasTrained:
             self.iterationCount = 0
