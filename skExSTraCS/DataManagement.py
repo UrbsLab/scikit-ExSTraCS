@@ -124,7 +124,15 @@ class DataManagement:
 
     def formatData(self,features,phenotypes,model):
         formatted = np.insert(features,self.numAttributes,phenotypes,1) #Combines features and phenotypes into one array
-        np.random.shuffle(formatted)
+
+        self.shuffleOrder = np.random.choice(self.numTrainInstances,self.numTrainInstances,replace=False) #e.g. first element in this list is where the first element of the original list will go
+        shuffled = []
+        for i in range(self.numTrainInstances):
+            shuffled.append(None)
+        for instanceIndex in range(self.numTrainInstances):
+            shuffled[self.shuffleOrder[instanceIndex]] = formatted[instanceIndex]
+        formatted = np.array(shuffled)
+
         shuffledFeatures = formatted[:,:-1].tolist()
         shuffledLabels = formatted[:,self.numAttributes].tolist()
         for i in range(len(shuffledFeatures)):

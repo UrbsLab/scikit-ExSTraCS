@@ -665,6 +665,18 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             raise Exception(
                 "There are no final attribute cooccurences to return, as the ExSTraCS model has not been trained")
 
+    def get_attribute_tracking_scores(self,instance_labels=np.array([])):
+        if self.hasTrained:
+            retList = []
+            if instance_labels.size != self.env.formatData.numTrainInstances:
+                raise Exception('# of Instance Labels must match # of training instances')
+
+            for i in range(self.env.formatData.numTrainInstances):
+                retList.append([instance_labels[i], self.AT.attAccuracySums[self.env.formatData.shuffleOrder[i]]])
+            return retList
+        else:
+            raise Exception("There is no AT scores to return, as the ExSTraCS model has not been trained")
+
     ##Export Methods##
     def export_iteration_tracking_data(self,filename='iterationData.csv'):
         if self.hasTrained:
