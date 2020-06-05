@@ -19,8 +19,9 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
     def __init__(self,learning_iterations=100000,N=1000,nu=1,chi=0.8,mu=0.04,theta_GA=25,theta_del=20,theta_sub=20,
                  acc_sub=0.99,beta=0.2,delta=0.1,init_fitness=0.01,fitness_reduction=0.1,theta_sel=0.5,rule_specificity_limit=None,
                  do_correct_set_subsumption=False,do_GA_subsumption=True,selection_method='tournament',do_attribute_tracking=True,
-                 do_attribute_feedback=True,expert_knowledge=None,rule_compaction='QRF',reboot_filename=None,
-                 discrete_attribute_limit=10,specified_attributes=np.array([]),track_accuracy_while_fit=False,random_state=None):
+                 do_attribute_feedback=True,attribute_tracking_method='add',attribute_tracking_beta = 0.1,expert_knowledge=None,
+                 rule_compaction='QRF',reboot_filename=None,discrete_attribute_limit=10,specified_attributes=np.array([]),
+                 track_accuracy_while_fit=False,random_state=None):
         '''
         :param learning_iterations:          Must be nonnegative integer. The number of training cycles to run.
         :param N:                           Must be nonnegative integer. Maximum micro classifier population size (sum of classifier numerosities).
@@ -42,6 +43,8 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         :param selection_method:             Must be either "tournament" or "roulette". Determines GA selection method. Recommended: tournament
         :param do_attribute_tracking:         Must be boolean. Whether to have AT
         :param do_attribute_feedback:         Must be boolean. Whether to have AF
+        :param attribute_tracking_method:   Must be 'add' or 'wh' (widrow hoff). Update AT method
+        :param attribute_tracking_beta:     Must be float
         :param expert_knowledge:             Must be np.ndarray or list or None. If None, don't use EK. If not, attribute filter scores are the array (in order)
         :param rule_compaction:              Must be None or String. QRF or PDRC or QRC or CRA2 or Fu2 or Fu1. If None, no rule compaction is done
         :param reboot_filename:              Must be String or None. Filename of pickled model to be rebooted
@@ -167,6 +170,14 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         if not(isinstance(do_attribute_feedback,bool)):
             raise Exception("do_attribute_feedback param must be boolean")
 
+        #attribute_tracking_method
+        if attribute_tracking_method != 'add' and attribute_tracking_method != 'wh':
+            raise Exception("attribute_tracking_method param must be 'add' or 'wh'")
+
+        # attribute_tracking_beta
+        if not self.checkIsFloat(attribute_tracking_beta):
+            raise Exception("attribute_tracking_beta param must be float")
+
         #expert_knowledge
         if not (isinstance(expert_knowledge, np.ndarray)) and not (isinstance(expert_knowledge, list)) and expert_knowledge != None:
             raise Exception("expert_knowledge param must be None or list/ndarray")
@@ -233,6 +244,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.do_GA_subsumption = do_GA_subsumption
         self.selection_method = selection_method
         self.do_attribute_tracking = do_attribute_tracking
+        self.attribute_tracking_beta = attribute_tracking_beta
         if self.do_attribute_tracking == False:
             self.do_attribute_feedback = False
         else:
@@ -241,6 +253,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             self.doExpertKnowledge = False
         else:
             self.doExpertKnowledge = True
+        self.attribute_tracking_method = attribute_tracking_method
         self.expert_knowledge = expert_knowledge
         self.rule_compaction = rule_compaction
         self.reboot_filename = reboot_filename

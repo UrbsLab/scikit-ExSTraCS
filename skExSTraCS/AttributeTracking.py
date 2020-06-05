@@ -9,9 +9,17 @@ class AttributeTracking:
 
     def updateAttTrack(self,model,pop):
         dataRef = model.env.dataRef
-        for ref in pop.correctSet:
-            for each in pop.popSet[ref].specifiedAttList:
-                self.attAccuracySums[dataRef][each] += pop.popSet[ref].accuracy
+        if model.attribute_tracking_method == 'add':
+            for ref in pop.correctSet:
+                for each in pop.popSet[ref].specifiedAttList:
+                    self.attAccuracySums[dataRef][each] += pop.popSet[ref].accuracy
+        elif model.attribute_tracking_method == 'wh':
+            tempAttTrack = [0]*model.env.formatData.numAttributes
+            for ref in pop.correctSet:
+                for each in pop.popSet[ref].specifiedAttList:
+                    tempAttTrack[each] += pop.popSet[ref].accuracy
+            for attribute_index in range(len(tempAttTrack)):
+                self.attAccuracySums[dataRef][attribute_index] += model.attribute_tracking_beta * (tempAttTrack[attribute_index] - self.attAccuracySums[dataRef][attribute_index])
 
     def updatePercent(self, model):
         """ Determines the frequency with which attribute feedback is applied within the GA.  """
