@@ -410,9 +410,10 @@ class Classifier:
     def selectGeneralizeRW(self,model,count):
         probList = []
         for attribute in self.specifiedAttList:
-            probList.append(model.EK.scores[attribute])
+            probList.append(1/model.EK.scores[attribute])
         if sum(probList) == 0:
             probList = (np.array(probList) + 1).tolist()
+
         probList = np.array(probList)/sum(probList) #normalize
         return np.random.choice(self.specifiedAttList,count,replace=False,p=probList).tolist()
 
