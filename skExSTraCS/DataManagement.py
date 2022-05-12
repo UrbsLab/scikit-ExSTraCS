@@ -60,9 +60,9 @@ class DataManagement:
             currentPhenotypeIndex+=1
         self.majorityClass = max(self.classCount)
         total = 0
-        for eachClass in list(classCount.keys()):
-            total += classCount[eachClass]
-        for eachClass in list(classCount.keys()):
+        for eachClass in list(self.classCount.keys()):
+            total += self.classCount[eachClass]
+        for eachClass in list(self.classCount.keys()):
             self.classPredictionWeights[eachClass] = 1 - (self.classPredictionWeights[eachClass]/total)
 
     def discriminateAttributes(self,features,model):
