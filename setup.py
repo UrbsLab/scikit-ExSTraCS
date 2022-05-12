@@ -6,14 +6,14 @@ with open("README.md","r") as fh:
 setup(
   name = 'scikit-ExSTraCS',
   packages = ['skExSTraCS'],
-  version = '1.0.9',
+  version = '1.1.0',
   license='License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
   description = 'ExSTraCS 2.0 Learning Classifier System',
   long_description_content_type="text/markdown",
   author = 'Robert Zhang, Ryan J. Urbanowicz',
   author_email = 'robertzh@seas.upenn.edu,ryanurb@upenn.edu',
   url = 'https://github.com/UrbsLab/scikit-ExSTraCS',
-  download_url = 'https://github.com/UrbsLab/scikit-ExSTraCS/archive/refs/tags/v_1.0.9.tar.gz',
+  download_url = 'https://github.com/UrbsLab/scikit-ExSTraCS/archive/refs/tags/v_1.1.0.tar.gz',
   keywords = ['machine learning','data analysis','data science','learning classifier systems','exstracs'],
   install_requires=['numpy','pandas','scikit-learn'],
   classifiers=[
