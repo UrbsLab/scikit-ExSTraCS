@@ -9,6 +9,8 @@ class Timer:
         self.globalTime = 0.0
         self.addedTime = 0.0
 
+        self.rule_time_archive = {} #stores dictionary of run times for archived rule populations
+
         # Match Time Variables
         self.startRefMatching = 0.0
         self.globalMatching = 0.0
@@ -60,6 +62,10 @@ class Timer:
         # Rule Compaction
         self.startRefRuleCmp = 0.0
         self.globalRuleCmp = 0.0
+
+    #Archive Rule Pop Times
+    def archive_rule_pop(self,iteration):
+        self.rule_time_archive[int(iteration)] = time.time() - self.globalStartRef
 
     # ************************************************************
     def startTimeMatching(self):

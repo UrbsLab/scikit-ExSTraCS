@@ -4,11 +4,14 @@ import random
 class Prediction():
     def __init__(self,model,population):
         self.decision = None
+        self.covered = False
         self.probabilities = {}
         self.hasMatch = len(population.matchSet) != 0
 
         #Discrete Phenotypes
         if model.env.formatData.discretePhenotype:
+            if len(population.matchSet) > 0:
+                self.covered = True
             self.vote = {}
             self.tieBreak_Numerosity = {}
             self.tieBreak_TimeStamp = {}
@@ -107,3 +110,10 @@ class Prediction():
             a[counter] = v
             counter += 1
         return a
+
+    def get_if_covered(self):
+        """ Return prediction prediction for each class as a dictionary."""
+        if self.covered:
+            return 1 #instance was covered by at least one rule
+        else:
+            return 0 #instance was not covered by any rules

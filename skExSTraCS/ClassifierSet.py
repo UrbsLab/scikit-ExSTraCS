@@ -9,7 +9,20 @@ class ClassifierSet:
         self.matchSet = []  # List of references to rules in population that match
         self.correctSet = []  # List of references to rules in population that both match and specify correct phenotype
         self.microPopSize = 0
+        self.pop_set_archive = {}
+        self.pop_set_hold = None
 
+    def archive_rule_pop(self,iteration):
+        self.pop_set_archive[int(iteration)] = copy.deepcopy(self.popSet)
+
+    def change_rule_pop(self,iteration):
+        self.pop_set_hold = copy.deepcopy(self.popSet)
+        self.popSet = self.pop_set_archive[int(iteration)]
+
+    def restore_rule_pop(self):
+        self.popSet = self.pop_set_hold
+        self.pop_set_hold = None
+        
     def makeMatchSet(self,model,state_phenotype):
         state = state_phenotype[0]
         phenotype = state_phenotype[1]

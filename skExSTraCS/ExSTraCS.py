@@ -21,7 +21,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                  do_correct_set_subsumption=False,do_GA_subsumption=True,selection_method='tournament',do_attribute_tracking=True,
                  do_attribute_feedback=True,attribute_tracking_method='add',attribute_tracking_beta = 0.1,expert_knowledge=None,
                  rule_compaction='QRF',reboot_filename=None,discrete_attribute_limit=10,specified_attributes=np.array([]),
-                 track_accuracy_while_fit=False,random_state=None):
+                 track_accuracy_while_fit=False,stored_rule_iterations=None,random_state=None):
         '''
         :param learning_iterations:          Must be nonnegative integer. The number of training cycles to run.
         :param N:                           Must be nonnegative integer. Maximum micro classifier population size (sum of classifier numerosities).
@@ -57,6 +57,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                                             param will be discrete and the rest will be continuous.
                                             If this value is given, and discrete_attribute_limit is not "c" or "d", discrete_attribute_limit overrides this specification
         :param track_accuracy_while_fit        Must be boolean. Determines if accuracy is tracked during model training
+        :param stored_rule_iterations: specifies iterations where a copy of the rule population is stored (Must be positive integers separated by commas or None)
         :param random_state:                  Must be an integer or None. Set a constant random seed value to some integer
         '''
         #learning_iterations
@@ -260,6 +261,10 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.discrete_attribute_limit = discrete_attribute_limit
         self.specified_attributes = specified_attributes
         self.track_accuracy_while_fit = track_accuracy_while_fit
+        if stored_rule_iterations == 'None' or stored_rule_iterations is None:
+            self.stored_rule_iterations = None
+        else:
+            self.stored_rule_iterations = [int(value) for value in stored_rule_iterations.split(',')]
         self.random_state = random_state
 
         self.hasTrained = False
@@ -368,6 +373,13 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                 accuracy = sum(self.trackingAccuracy)/len(self.trackingAccuracy)
             else:
                 accuracy = 0
+
+            #Pause learning to conduct a complete evaluation of the current rule population
+            if self.stored_rule_iterations != None and (self.iterationCount + 1) in self.stored_rule_iterations:
+                #Archive current rule population
+                print('archiving'+str(self.iterationCount+1))
+                self.population.archive_rule_pop(self.iterationCount+1)
+                self.timer.archive_rule_pop(self.iterationCount+1)
 
             self.timer.updateGlobalTimer()
             self.addToTracking(accuracy,aveGenerality)
@@ -540,7 +552,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         self.timer.globalEvaluation = rawData[14]
 
     ##*************** Predict and Score ****************
-    def predict(self, X):
+    def predict(self, X,rule_pop_iter=None,):
         """Scikit-learn required: Test Accuracy of ExSTraCS
             Parameters
             X: array-like {n_samples, n_features} Test instances to classify. ALL INSTANCE ATTRIBUTES MUST BE NUMERIC
@@ -558,7 +570,8 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 
         instances = X.shape[0]
         predList = []
-
+        if rule_pop_iter != None:
+            self.population.change_rule_pop(rule_pop_iter)
         for inst in range(instances):
             state = X[inst]
             self.population.makeEvalMatchSet(self,state)
@@ -566,6 +579,8 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             phenotypeSelection = prediction.getDecision()
             predList.append(phenotypeSelection)
             self.population.clearSets()
+        if rule_pop_iter != None:    
+            self.population.restore_rule_pop()
         return np.array(predList)
 
     def predict_proba(self, X):
@@ -596,6 +611,38 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             self.population.clearSets()
         return np.array(predList)
 
+
+    def predict_covered(self, X, rule_pop_iter=None,):
+        """Scikit-learn required: Test Accuracy of ExSTraCS
+            Parameters
+            X: array-like {n_samples, n_features} Test instances to classify. ALL INSTANCE ATTRIBUTES MUST BE NUMERIC
+
+            Returns
+            y: array-like {n_samples} Classifications.
+        """
+        try:
+            for instance in X:
+                for value in instance:
+                    if not (np.isnan(value)):
+                        float(value)
+        except:
+            raise Exception("X must be fully numeric")
+
+        instances = X.shape[0]
+        prediction_covered_list = []
+        if rule_pop_iter != None:
+            self.population.change_rule_pop(rule_pop_iter)
+        for inst in range(instances):
+            state = X[inst]
+            self.population.makeEvalMatchSet(self,state)
+            prediction = Prediction(self, self.population)
+            outcome_coverage = prediction.get_if_covered()
+            prediction_covered_list.append(outcome_coverage)
+            self.population.clearSets()
+        if rule_pop_iter != None:    
+            self.population.restore_rule_pop()
+        return np.array(prediction_covered_list)
+    
     def score(self,X,y):
         predList = self.predict(X)
         return balanced_accuracy_score(y,predList)
