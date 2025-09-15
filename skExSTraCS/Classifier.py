@@ -248,7 +248,7 @@ class Classifier:
                             self.condition.pop(i_cl1)
 
                             self.specifiedAttList.remove(attRef)
-
+                    changed = True
                 # Discrete Attribute
                 else:
                     pass
